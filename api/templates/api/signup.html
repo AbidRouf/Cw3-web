@@ -1,0 +1,39 @@
+<!-- templates/api/signup.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up</title>
+</head>
+<body>
+  <h1>Create Account</h1>
+
+  {% if messages %}
+    {% for msg in messages %}
+      <p style="color: red;">{{ msg }}</p>
+    {% endfor %}
+  {% endif %}
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <label>Username:</label>
+    <input type="text" name="username" required><br><br>
+
+    <label>Email:</label>
+    <input type="email" name="email"><br><br>
+
+    <label>Password:</label>
+    <input type="password" name="password" required><br><br>
+
+    <label>Confirm Password:</label>
+    <input type="password" name="password2" required><br><br>
+
+    <!-- Optional Date of Birth -->
+    <label>Date of Birth (YYYY-MM-DD):</label>
+    <input type="text" name="dob"><br><br>
+
+    <button type="submit">Sign Up</button>
+  </form>
+</body>
+</html>
