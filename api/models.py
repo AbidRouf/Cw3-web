@@ -10,7 +10,7 @@ class Hobby(models.Model):
 
 class User(AbstractUser):
     dob = models.DateField(
-        verbose_name="Date of Birth"
+        verbose_name="Date of Birth", null=True, blank=True
     )
     hobbies = models.ManyToManyField(Hobby)
 
