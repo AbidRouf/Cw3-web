@@ -57,7 +57,7 @@ def signup_view(request):
         username=username,
         email=email,
         password=password,
-        dob=dob
+        dob=user_dob
     )
     user.save()
     messages.success(request, "You have successfully registered")
