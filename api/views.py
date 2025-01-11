@@ -5,6 +5,10 @@ from django.http import HttpRequest, HttpResponse
 from datetime import datetime
 
 def login_view(request: HttpRequest) -> HttpResponse:
+    """
+    Handles use login. and authenticates credentials before redirecting to 'home' on success or returning an error message
+    on potential failiure 
+    """
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -20,6 +24,7 @@ def login_view(request: HttpRequest) -> HttpResponse:
         return render(request, 'api/login.html')
 
 def signup_view(request):
+    """This handle the user registration, then validates input befre creating a new user then redirecting the user to 'login' on success or will display a corresponding error depended on failiure """
     if request.method == 'GET':
         return render(request, 'api/signup.html')
     
@@ -70,4 +75,7 @@ def signup_view(request):
 
 
 def main_spa(request: HttpRequest) -> HttpResponse:
+    """
+    This function renders the SPA main page.
+    """
     return render(request, 'api/spa/index.html', {})
