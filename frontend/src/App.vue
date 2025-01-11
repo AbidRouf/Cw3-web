@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header v-if="showHeader">
-      <h1>Hobbies App</h1>
+      <h1 class="text-red-500">Hobbies App</h1>
       <!-- ADD LINKS HERE -->
       <router-link to="/profile">
         <button>Go to Profile</button>
