@@ -4,12 +4,12 @@
       <form @submit.prevent="updateProfile">
         <!-- Name Field -->
         <div class="form-group">
-          <label for="name">Name:</label>
+          <label for="name">Full Name:</label>
           <input
             type="text"
             id="name"
             v-model="user.name"
-            placeholder="Enter your name"
+            placeholder="Enter your full name"
             required
           />
         </div>
@@ -64,13 +64,14 @@
             <input
               type="text"
               v-model="newHobbyName"
-              placeholder="Add new hobby"
+              placeholder="Add different hobby"
             />
             <button type="button" @click="createAndAddHobby">Add New Hobby</button>
           </div>
         </div>
   
         <!-- Password Update Section -->
+         <!-- New Password -->
         <div class="form-group">
           <label for="password">New Password:</label>
           <input
@@ -78,6 +79,16 @@
             id="password"
             v-model="newPassword"
             placeholder="Enter new password"
+          />
+        </div>
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label for="password">Confirm Password:</label>
+          <input
+            type="password"
+            id="password"
+            v-model="confirmPassword"
+            placeholder="Confirm password"
           />
         </div>
   
@@ -96,12 +107,10 @@
       // Initial user data; in a real app, fetch this from the backend
       const user = ref({
         id: 1,
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        dateOfBirth: '1990-01-01',
+        name: '',
+        email: '',
+        dateOfBirth: '',
         hobbies: [
-          { id: 1, name: 'Reading' },
-          { id: 2, name: 'Swimming' },
         ],
       });
   
@@ -111,6 +120,7 @@
         { id: 2, name: 'Swimming' },
         { id: 3, name: 'Gaming' },
         { id: 4, name: 'Cooking' },
+        { id: 5, name: 'Driving' },
         // Add more hobbies as needed
       ]);
   
@@ -122,6 +132,9 @@
   
       // New password input
       const newPassword = ref('');
+        
+      // Confirm password input
+      const confirmPassword = ref('');
   
       // Compute available hobbies that are not already added
       const availableHobbies = computed(() => {
@@ -165,12 +178,19 @@
         // In a real app, send an API request to update the user's profile
         // For now, we'll just log the updated user data
         console.log('Updated User:', user.value);
-        if (newPassword.value) {
-          console.log('New Password:', newPassword.value);
+        // console.log('New Password:', newPassword.value);
+        // console.log('Confirm Password:', confirmPassword.value);
+        if (newPassword.value === confirmPassword.value) {
+          // console.log('New Password:', newPassword.value);
           // Handle password update logic here
           newPassword.value = '';
+          confirmPassword.value = '';
+          alert('Profile updated successfully!');
+          user.value = {id: 1, name: '', email: '', dateOfBirth: '', hobbies: []};
+          newHobbyName.value = ''
+          selectedHobbyId.value = ''
         }
-        alert('Profile updated successfully!');
+        else{alert('Passwords do not match.')}
       };
   
       return {
@@ -183,6 +203,7 @@
         createAndAddHobby,
         removeHobby,
         newPassword,
+        confirmPassword,
         updateProfile,
       };
     },
