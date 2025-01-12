@@ -170,7 +170,6 @@
         confirmPassword: '',
         hobbies: ['Reading', 'Swimming'],
       });
-      const url = ref('http://localhost:8000/api/')
   
       // Dummy list of existing hobbies
       const existingHobbies = ref(['Gaming', 'Cooking', 'Traveling', 'Running']);
@@ -206,7 +205,6 @@
         form.value.hobbies.splice(index, 1);
       };
   
-<<<<<<< HEAD
       // Handle form submission (dummy logic)
       const handleSubmit = () => {
         // Simple password match check
@@ -232,90 +230,8 @@
         removeHobby,
         handleSubmit,
         feedbackMessage,
-=======
-      // Update profile handler
-    //   const updateProfile = () => {
-    //     // In a real app, send an API request to update the user's profile
-    //     // For now, we'll just log the updated user data
-    //     console.log('Updated User:', user.value);
-    //     // console.log('New Password:', newPassword.value);
-    //     // console.log('Confirm Password:', confirmPassword.value);
-    //     if (newPassword.value === confirmPassword.value) {
-    //       // console.log('New Password:', newPassword.value);
-    //       // Handle password update logic here
-    //       newPassword.value = '';
-    //       confirmPassword.value = '';
-    //       alert('Profile updated successfully!');
-    //       user.value = {id: 1, name: '', email: '', dateOfBirth: '', hobbies: []};
-    //       newHobbyName.value = ''
-    //       selectedHobbyId.value = ''
-    //     }
-    //     else{alert('Passwords do not match.')}
-    //   };
-  
-      return {
-        user,
-        url,
-        allHobbies,
-        selectedHobbyId,
-        availableHobbies,
-        addHobby,
-        newHobbyName,
-        createAndAddHobby,
-        removeHobby,
-        newPassword,
-        confirmPassword,
-        // updateProfile,
->>>>>>> bad1f6f21f2f984ab9496455b7b009c029bfe5a8
       };
     },
-    methods: {
-        async updateProfile() {
-            // In a real app, send an API request to update the user's profile
-            // For now, we'll just log the updated user data
-            console.log('User:', this.user);
-            // console.log('New Password:', newPassword.value);
-            // console.log('Confirm Password:', confirmPassword.value);
-            if (this.newPassword === this.confirmPassword) {
-                try {
-                    const response = await fetch(`${this.url}signup/`, {
-                        method: 'POST',
-                        body: JSON.stringify({ user: this.user }),
-                        headers: { 'Content-Type': 'application/json' },
-                    });
-                    const reply = await response.json();
-                    console.log(`Status: ${response.status}  ${reply.message}`);
-                    this.newPassword = '';
-                    this.confirmPassword = '';
-                    this.user = { name: '', email: '', dateOfBirth: '', hobbies: [] };
-                    this.newHobbyName = ''
-                    this.selectedHobbyId = ''
-                    alert('Profile updated successfully!');
-                } catch (error) {
-                    alert('Error creating a profile')
-                    console.error('Error creating a profile:', error);
-                }
-                // console.log('New Password:', newPassword.value);
-                // Handle password update logic here
-                // try {
-                //     const response = await fetch(`${this.url}db/comment/`, {
-                //         method: 'DELETE',
-                //         body: JSON.stringify({ id: commentId }),
-                //         headers: { 'Content-Type': 'application/json' },
-                //     });
-                //     const reply = await response.json();
-                //     console.log(`Status: ${response.status}  ${reply.message}`);
-                //     if (response.ok) {
-                //         this.comments = this.comments.filter(comment => comment.id !== commentId);
-                //     }
-                // } catch (error) {
-                //     console.error('Error deleting comment:', error);
-                // } 
-
-            }
-            else { alert('Passwords do not match.') }
-        }
-    }
   });
   </script>
   
