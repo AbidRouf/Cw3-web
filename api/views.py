@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib import messages
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from datetime import datetime
 
 def login_view(request: HttpRequest) -> HttpResponse:
@@ -69,6 +69,28 @@ def signup_view(request):
     return redirect('login')
     
 
+
+def auth_status(request):
+    if request.user.is_authenticated:
+        hobbies = list(request.user.hobbies.values_list('name', flat=True))
+        user_data = {
+            'isAuthenticated': True,
+            'user': {
+                'id': request.user.id,
+                'username': request.user.username,
+                'email': request.user.email,
+                'first_name': request.user.first_name,
+                'last_name': request.user.last_name,
+                'dob': request.user.dob,  # Date of Birth
+                'hobbies': hobbies,
+            }
+        }
+    else:
+        user_data = {
+            'isAuthenticated': False,
+            'user': None
+        }
+    return JsonResponse(user_data)
 
     
 
