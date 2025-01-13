@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, get_user_model, update_session_auth_hash
+from django.contrib.auth import authenticate, login, get_user_model, update_session_auth_hash, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods, require_POST
