@@ -153,3 +153,13 @@ def main_spa(request: HttpRequest) -> HttpResponse:
     This function renders the SPA main page.
     """
     return render(request, 'api/spa/index.html', {})
+
+def logout_view(request: HttpRequest) -> JsonResponse:
+    """
+    handles the user logout. the request is a POST request, logs out the user and
+    returns a success message. Otherwise, returns an error message.
+    """
+    if request.method == "POST":
+        logout(request)
+        return JsonResponse({'message': 'Logged out successfully'}, status=200)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)

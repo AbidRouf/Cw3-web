@@ -20,16 +20,33 @@
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
-import { useRoute } from 'vue-router';
+
 
 export default defineComponent({
   name: 'App',
   setup() {
-    const route = useRoute();
+    const showHeader = computed(() => location.pathname === '/');
 
-    const showHeader = computed(() => route.path == '/');
+    const logout = async () => {
+      try {
+        const response = await fetch('/logout/', {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.getAttribute('value') || '',
+          },
+        });
 
-    return { showHeader };
+        if (response.ok) {
+          window.location.href = '/login/';
+        } else {
+          console.error('Logout failed');
+        }
+      } catch (error) {
+        console.error('An error occurred:', error);
+      }
+    };
+
+    return { showHeader, logout };
   }
 });
 </script>
