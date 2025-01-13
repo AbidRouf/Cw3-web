@@ -19,7 +19,7 @@ from django.urls import include, path
 from django.http import HttpResponse
 
 from .views import main_spa, login_view, signup_view, auth_status,logout_view,change_user_password,get_csrf_token
-=======
+
 
 
 urlpatterns = [
