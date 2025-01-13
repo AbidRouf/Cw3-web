@@ -1,11 +1,11 @@
 <template>
-    <div class="modal fade show" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel"
+    <div class="modal fade show" id="modal" tabindex="-1" aria-labelledby="ModalLabel"
         style="display: block;" data-keyboard="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title ms-3" id="commentModalLabel">Manage Profile</h5>
-                    <button type="button" class="btn-close" aria-label="Close"></button>
+                    <h5 class="modal-title ms-3" id="ModalLabel" data-bs-toggle="modal">Manage Profile</h5>
+                    <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg">
                     <!-- Header / Breadcrumb -->
@@ -100,7 +100,7 @@
                                 class="flex-1 border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
                             <button type="button" @click="addNewHobby"
                                 class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">
-                                Button
+                                Add Hobby
                             </button>
                         </div>
                     </div>
