@@ -196,3 +196,6 @@ def update_profile(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': 'Failed to update profile.'}, status=500)
 
+def get_all_hobbies(request):
+    hobbies = list(Hobby.objects.values('id', 'name'))
+    return JsonResponse({'success': True, 'hobbies': hobbies}, status=200)

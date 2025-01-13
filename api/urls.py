@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.http import HttpResponse
 
-from .views import main_spa, login_view, signup_view, auth_status,logout_view,change_user_password,get_csrf_token,profile_view,create_new_hobby,update_profile
+from .views import main_spa, login_view, signup_view, auth_status,logout_view,change_user_password,get_csrf_token,profile_view,create_new_hobby,update_profile,get_all_hobbies
 
 
 
@@ -33,5 +33,7 @@ urlpatterns = [
     path('csrf/', get_csrf_token, name='get_csrf_token'),
     path('profile/create-hobby/', create_new_hobby, name='create_new_hobby'),
     path('profile/update/', update_profile, name='update_profile'),
+    path('hobbies/', get_all_hobbies, name='get_all_hobbies'),
+
 
 ]
