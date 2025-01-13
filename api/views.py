@@ -1,6 +1,11 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth import authenticate, login, get_user_model, update_session_auth_hash
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods, require_POST
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.contrib.auth.forms import PasswordChangeForm
+from .models import Hobby
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from datetime import datetime
 
@@ -81,7 +86,7 @@ def auth_status(request):
                 'email': request.user.email,
                 'first_name': request.user.first_name,
                 'last_name': request.user.last_name,
-                'dob': request.user.dob,  # Date of Birth
+                'dob': request.user.dob,  
                 'hobbies': hobbies,
             }
         }
@@ -92,9 +97,56 @@ def auth_status(request):
         }
     return JsonResponse(user_data)
 
-    
+
+@login_required
+@require_http_methods(["GET"])
+def profile_view(request):
+    try:
+        hobbies = list(request.user.hobbies.values_list('name', flat=True))
+        user_data = {
+            'id': request.user.id,
+            'username': request.user.username,
+            'email': request.user.email,
+            'first_name': request.user.first_name,
+            'last_name': request.user.last_name,
+            'dob': request.user.dob,  
+            'hobbies': hobbies,
+        }
+        return JsonResponse({'success': True, 'user': user_data}, status=200)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': 'Failed to retrieve profile information.'}, status=500)
 
 
+@login_required
+@require_POST
+def change_user_password(request):
+    new_password = request.POST.get('new_password')
+    confirm_password = request.POST.get('confirm_password')
+
+    if new_password != confirm_password:
+        return JsonResponse({'success': False, 'error': 'Password do not match'}, status=400)
+
+    try:
+        request.user.set_password(new_password)
+        request.user.save()
+        update_session_auth_hash(request, request.user)
+        return JsonResponse({'success': True, 'message': 'Password updated successfully.'}, status=200)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': 'Failed to update password.'}, status=500)
+
+    # form = PasswordChangeForm(user=request.user, data=request.POST)
+
+    # if form.is_valid():
+    #     user = form.save()
+    #     update_session_auth_hash(request, user)
+    #     return JsonResponse({'success': True, 'message': 'Password updated successfully.'}, status=200)
+    # else:
+    #     errors = form.errors.as_json()
+    #     return JsonResponse({'success': False, 'errors': errors}, status=400)
+
+@ensure_csrf_cookie
+def get_csrf_token(request):
+    return JsonResponse({'detail': 'CSRF cookie set'})
 
 def main_spa(request: HttpRequest) -> HttpResponse:
     """
