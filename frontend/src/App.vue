@@ -5,7 +5,7 @@
 
             <!-- Navigation Links -->
             <router-link v-if="isAuthenticated" to="/profile/" class="mt-2">
-                <button class="bg-blue-500 text-white py-2 px-4 rounded">Go to Profile</button>
+                <button class="bg-blue-500 text-white py-2 px-4 rounded">Manage Profile</button>
             </router-link>
 
             <!-- Conditional Login/Logout Links -->
