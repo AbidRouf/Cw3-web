@@ -199,3 +199,30 @@ def update_profile(request):
 def get_all_hobbies(request):
     hobbies = list(Hobby.objects.values('id', 'name'))
     return JsonResponse({'success': True, 'hobbies': hobbies}, status=200)
+
+def add_hobby(request):
+    hobby_id = request.POST.get('hobby_id')
+
+    try:
+        hobby = Hobby.objects.get(id=hobby_id)
+        request.user.hobbies.add(hobby)
+        return JsonResponse({'success': True, 'message': 'Hobby added successfully.'}, status=200)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': 'Failed to add hobby.'}, status=500)
+    
+
+@login_required
+def check_user_hobby(request):
+    hobby_name = request.GET.get('hobby')
+    if not hobby_name:
+        return JsonResponse({'success': False, 'error': 'Hobby name is required.'}, status=400)
+
+    try:
+        hobby = Hobby.objects.filter(name=hobby_name).first()
+        if not hobby:
+            return JsonResponse({'success': False, 'error': 'Hobby does not exist in the database.'}, status=404)
+
+        user_has_hobby = request.user.hobbies.filter(id=hobby.id).exists()
+        return JsonResponse({'success': True, 'exists': user_has_hobby}, status=200)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': 'An error occurred while checking the hobby.'}, status=500)
