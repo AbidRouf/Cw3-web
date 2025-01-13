@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, get_user_model, update_session_auth_hash, logout
-from django.contrib import messages
+from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods, require_POST
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -160,6 +160,25 @@ def logout_view(request: HttpRequest) -> JsonResponse:
     returns a success message. Otherwise, returns an error message.
     """
     if request.method == "POST":
-        logout(request)
+        auth.logout(request)
         return JsonResponse({'message': 'Logged out successfully'}, status=200)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+@login_required
+@require_POST
+def create_new_hobby(request):
+    hobby_name = request.POST.get('hobby')
+    if not hobby_name:
+        return JsonResponse({'success': False, 'error': 'Hobby name is required.'}, status=400)
+    
+    try:
+        hobby = Hobby.objects.filter(name=hobby_name).first()
+        if not hobby:
+           hobby = Hobby(name=hobby_name)
+           hobby.save()
+        request.user.hobbies.add(hobby)
+        return JsonResponse({'success': True, 'message': 'Hobby added successfully.'}, status=200)
+    except Exception as e:
+        print(f"Error adding hobby: {e}")
+        return JsonResponse({'success': False, 'error': 'An error  while adding the hobby.'}, status=500)

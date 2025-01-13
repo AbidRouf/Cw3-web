@@ -12,7 +12,8 @@
     <p>You have successfully logged out.</p>
 
     <!-- Redirect to login page -->
-    <form action="/login/" method="get">
+    <form method="POST" action="/logout/">
+        {% csrf_token %}
         <button type="submit">Go to Login Page</button>
     </form>
 </body>
