@@ -77,7 +77,7 @@ export default defineComponent({
 
         if (response.ok) {
           isAuthenticated.value = false;
-          window.location.href = '/login/';
+        //   window.location.href = '/';
         } else {
           const errorData = await response.json();
           console.error('Logout failed:', errorData);
