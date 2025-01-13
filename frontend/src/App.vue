@@ -4,7 +4,7 @@
       <h1 class="text-red-500 text-center">Hobbies App</h1>
 
       <!-- Navigation Links -->
-      <router-link to="/profile/" class="mt-2">
+      <router-link v-if="isAuthenticated" to="/profile/" class="mt-2">
         <button class="bg-blue-500 text-white py-2 px-4 rounded">Go to Profile</button>
       </router-link>
 
