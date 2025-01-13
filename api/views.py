@@ -134,15 +134,6 @@ def change_user_password(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': 'Failed to update password.'}, status=500)
 
-    # form = PasswordChangeForm(user=request.user, data=request.POST)
-
-    # if form.is_valid():
-    #     user = form.save()
-    #     update_session_auth_hash(request, user)
-    #     return JsonResponse({'success': True, 'message': 'Password updated successfully.'}, status=200)
-    # else:
-    #     errors = form.errors.as_json()
-    #     return JsonResponse({'success': False, 'errors': errors}, status=400)
 
 @ensure_csrf_cookie
 def get_csrf_token(request):
@@ -182,3 +173,26 @@ def create_new_hobby(request):
     except Exception as e:
         print(f"Error adding hobby: {e}")
         return JsonResponse({'success': False, 'error': 'An error  while adding the hobby.'}, status=500)
+    
+@login_required
+@require_POST
+def update_profile(request):
+    first_name = request.POST.get('first_name')
+    last_name = request.POST.get('last_name')
+    email = request.POST.get('email')
+    dob = request.POST.get('dob')
+
+    try:
+        if first_name:
+            request.user.first_name = first_name
+        if last_name:
+            request.user.last_name = last_name
+        if email:
+            request.user.email = email
+        if dob:
+            request.user.dob = datetime.strptime(dob, '%Y-%m-%d').date()
+        request.user.save()
+        return JsonResponse({'success': True, 'message': 'Profile updated successfully.'}, status=200)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': 'Failed to update profile.'}, status=500)
+
