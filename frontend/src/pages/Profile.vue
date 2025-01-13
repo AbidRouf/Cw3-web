@@ -7,7 +7,7 @@
                     <h5 class="modal-title ms-3" id="ModalLabel" data-bs-toggle="modal">Manage Profile</h5>
                     <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="max-w-3xl mx-auto p-6 bg-white rounded-lg">
+                <div class="max-w-3xl p-6 bg-white rounded-lg">
                     <!-- Header / Breadcrumb -->
                     <div class="mb-6 flex justify-between items-center">
                         <div>
