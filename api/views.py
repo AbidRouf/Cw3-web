@@ -159,6 +159,9 @@ def logout_view(request: HttpRequest) -> JsonResponse:
 @login_required
 @require_POST
 def create_new_hobby(request):
+    """
+    This function creates a new hobby and then is used for adding it to the users hobbies,last section will return a successfull or error response
+    """
     hobby_name = request.POST.get('hobby')
     if not hobby_name:
         return JsonResponse({'success': False, 'error': 'Hobby name is required.'}, status=400)
@@ -177,6 +180,9 @@ def create_new_hobby(request):
 @login_required
 @require_POST
 def update_profile(request):
+    """
+    For updating users profile details,then will return a succesfull response if all is added correctly or an error response if not added in intended way
+    """
     first_name = request.POST.get('first_name')
     last_name = request.POST.get('last_name')
     email = request.POST.get('email')
@@ -197,10 +203,16 @@ def update_profile(request):
         return JsonResponse({'success': False, 'error': 'Failed to update profile.'}, status=500)
 
 def get_all_hobbies(request):
+    """
+    fetches all hobbies all from the database,and will return a json response as seen on the last line
+    """
     hobbies = list(Hobby.objects.values('id', 'name'))
     return JsonResponse({'success': True, 'hobbies': hobbies}, status=200)
 
 def add_hobby(request):
+    """
+    Adds an existing hobby that is already on the site the other users actual hobbies,then returns a success or error JSON response.
+    """
     hobby_id = request.POST.get('hobby_id')
 
     try:
@@ -213,6 +225,9 @@ def add_hobby(request):
 
 @login_required
 def check_user_hobby(request):
+    """
+    This checks for users hobbies and ensures a certain specific hobby is present,then returns a success or error json response.
+    """
     hobby_name = request.GET.get('hobby')
     if not hobby_name:
         return JsonResponse({'success': False, 'error': 'Hobby name is required.'}, status=400)
