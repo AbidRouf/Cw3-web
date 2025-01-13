@@ -92,7 +92,7 @@
                             <select v-model="selectedExistingHobby"
                                 class="flex-1 border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
                                 <option disabled value="">Select an existing hobby</option>
-                                <option v-for="(hobby, idx) in existingHobbies" :key="idx" :value="hobby">
+                                <option v-for="(hobby, idx) in availableHobbies" :key="idx" :value="hobby">
                                     {{ hobby }}
                                 </option>
                             </select>
@@ -108,7 +108,7 @@
                                 class="flex-1 border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
                             <button type="button" @click="addNewHobby"
                                 class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">
-                                Button
+                                Add Hobby
                             </button>
                         </div>
                     </div>
@@ -167,7 +167,10 @@ export default defineComponent({
 
 
 
-        const existingHobbies = ref(['Gaming', 'Cooking', 'Traveling', 'Running', 'Reading', 'Swimming']);
+        const originalHobbies = ref(['Gaming', 'Cooking', 'Traveling', 'Running', 'Reading', 'Swimming']); // List of popular hobbies
+        const availableHobbies = computed(() =>
+        originalHobbies.value.filter(hobby => !form.value.hobbies.includes(hobby))
+        );
         const selectedExistingHobby = ref('');
         const newHobby = ref('');
         const feedbackMessage = ref('');
@@ -175,8 +178,6 @@ export default defineComponent({
         const addExistingHobby = () => {
             if (selectedExistingHobby.value && !form.value.hobbies.includes(selectedExistingHobby.value)) {
                 form.value.hobbies.push(selectedExistingHobby.value);
-                const index = existingHobbies.value.indexOf(selectedExistingHobby.value);
-                existingHobbies.value.splice(index, 1)
                 selectedExistingHobby.value = '';
             }
         };
@@ -190,7 +191,6 @@ export default defineComponent({
         };
 
         const removeHobby = (index: number) => {
-            existingHobbies.value.push(form.value.hobbies[index])
             form.value.hobbies.splice(index, 1);
         };
 
@@ -233,7 +233,7 @@ export default defineComponent({
 
         return {
             form,
-            existingHobbies,
+            availableHobbies,
             selectedExistingHobby,
             newHobby,
             addExistingHobby,
