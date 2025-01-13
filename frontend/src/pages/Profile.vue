@@ -21,10 +21,18 @@
                         <h2 class="text-2xl font-semibold text-gray-700 mb-4">User Information</h2>
                         <form @submit.prevent="handleSubmit">
                             <div class="grid grid-cols-1 gap-4">
+                                <!-- Userame Field -->
+                                <div>
+                                    <label class="block text-gray-700 font-medium mb-1" for="name">userame:</label>
+                                    <input id="name" type="text" v-model="form.username" placeholder="Your full name"
+                                        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        required />
+                                </div>
+
                                 <!-- Name Field -->
                                 <div>
                                     <label class="block text-gray-700 font-medium mb-1" for="name">Name:</label>
-                                    <input id="name" type="text" v-model="form.name" placeholder="Your full name"
+                                    <input id="name" type="text" v-model="name" placeholder="Your full name"
                                         class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                                         required />
                                 </div>
@@ -124,22 +132,34 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 
 export default defineComponent({
     name: 'Profile',
     setup() {
         // Form data (dummy backbone for now)
         const form = ref({
-            name: 'John Doe',
-            email: 'john.doe@example.com',
-            dob: '1990-01-01',
+            username: '',
+            first_name: '',
+            last_name: '',
+            email: '',
+            dob: null,
             password: '',
             confirmPassword: '',
-            hobbies: ['Reading', 'Swimming'],
+            hobbies: ['N/A'],
         });
-        const isModalVisible = ref(true)
-
+        const name = computed({
+            get: () => `${form.value.first_name} ${form.value.last_name}`.trim(),
+            set: (newValue: string) => {
+                const [firstName, ...lastName] = newValue.split(' ');
+                form.value.first_name = firstName || '';
+                form.value.last_name = lastName.join(' ') || '';
+            },
+        }); const isModalVisible = ref(true)
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            form.value = JSON.parse(storedUser);
+        }
         const closeModal = () => {
             isModalVisible.value = false;
             window.location.href = "/";
@@ -147,7 +167,7 @@ export default defineComponent({
 
 
 
-        const existingHobbies = ref(['Gaming', 'Cooking', 'Traveling', 'Running']);
+        const existingHobbies = ref(['Gaming', 'Cooking', 'Traveling', 'Running', 'Reading', 'Swimming']);
         const selectedExistingHobby = ref('');
         const newHobby = ref('');
         const feedbackMessage = ref('');
@@ -155,6 +175,8 @@ export default defineComponent({
         const addExistingHobby = () => {
             if (selectedExistingHobby.value && !form.value.hobbies.includes(selectedExistingHobby.value)) {
                 form.value.hobbies.push(selectedExistingHobby.value);
+                const index = existingHobbies.value.indexOf(selectedExistingHobby.value);
+                existingHobbies.value.splice(index, 1)
                 selectedExistingHobby.value = '';
             }
         };
@@ -168,10 +190,15 @@ export default defineComponent({
         };
 
         const removeHobby = (index: number) => {
+            existingHobbies.value.push(form.value.hobbies[index])
             form.value.hobbies.splice(index, 1);
         };
 
         const handleSubmit = () => {
+            if (!form.value.username || !form.value.first_name || !form.value.last_name || !form.value.email || !form.value.dob || !form.value.password || form.value.hobbies.length < 1) {
+                alert('Fill in all fields');
+                return;
+            }
             if (form.value.password !== form.value.confirmPassword) {
                 alert('Passwords do not match.');
                 return;
@@ -217,6 +244,7 @@ export default defineComponent({
             logout,
             closeModal,
             isModalVisible,
+            name,
         };
     },
 });
