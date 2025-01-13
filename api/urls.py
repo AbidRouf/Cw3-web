@@ -21,7 +21,9 @@ from django.http import HttpResponse
 from .views import main_spa, login_view, signup_view, auth_status,logout_view,change_user_password,get_csrf_token,profile_view,create_new_hobby,update_profile,get_all_hobbies,add_hobby,check_user_hobby
 
 
-
+"""
+This defines the url patterns for the project ,and will map the routes to their corresponding views
+"""
 urlpatterns = [
     path('', main_spa, name='home'),
     path('login/', login_view, name='login'), 
