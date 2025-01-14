@@ -133,7 +133,7 @@
 
 <script lang="ts">
 import { useUserStore } from '../store';
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, computed, onMounted } from 'vue';
 
 export default defineComponent({
     name: 'Profile',
@@ -167,26 +167,108 @@ export default defineComponent({
 
 
 
-        const originalHobbies = ref(['Gaming', 'Cooking', 'Traveling', 'Running', 'Reading', 'Swimming']); // List of popular hobbies
+        const originalHobbies = ref<string[]>([]); // List of popular hobbies
+        const getAllHobbies = async () => {
+            try {
+                const response = await fetch('/hobbies/', {
+                    method: 'GET',
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data)
+                    originalHobbies.value = data.hobbies
+                } else {
+                    alert('Failed to get all hobbies');
+                }
+            } catch (error) {
+                console.error('Error getting all hobbies:', error);
+            }
+        };
+        onMounted(() => {
+            getAllHobbies();
+        });
         const availableHobbies = computed(() =>
             originalHobbies.value.filter(hobby => !form.value.hobbies.includes(hobby))
         );
+
         const selectedExistingHobby = ref('');
         const newHobby = ref('');
         const feedbackMessage = ref('');
 
-        const addExistingHobby = () => {
-            if (selectedExistingHobby.value && !form.value.hobbies.includes(selectedExistingHobby.value)) {
-                form.value.hobbies.push(selectedExistingHobby.value);
-                selectedExistingHobby.value = '';
+
+        const addExistingHobby = async () => {
+            if (!selectedExistingHobby.value) {
+                alert('Please select a hobby to add.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/profile/add-hobby/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.getAttribute('value') || '',
+                    },
+                    body: JSON.stringify({ hobby: selectedExistingHobby.value }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        form.value.hobbies.push(selectedExistingHobby.value); // Add hobby name to user's list
+                        selectedExistingHobby.value = ''; // Clear the selection
+                        alert('Hobby added successfully!');
+                    } else {
+                        alert(data.error || 'Failed to add the hobby.');
+                    }
+                } else {
+                    alert('Failed to add the hobby. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error adding hobby:', error);
+                alert('An error occurred while adding the hobby.');
             }
         };
 
-        const addNewHobby = () => {
-            const hobby = newHobby.value.trim();
-            if (hobby && !form.value.hobbies.includes(hobby)) {
-                form.value.hobbies.push(hobby);
-                newHobby.value = '';
+
+        const addNewHobby = async () => {
+            const hobby = newHobby.value.trim(); // Get the value of the new hobby
+            console.log(hobby)
+
+            if (!hobby) {
+                alert('Please enter a hobby name.');
+                return;
+            }
+
+            // Construct the payload using FormData
+            const formData = new FormData();
+            formData.append('hobby', hobby);
+
+            try {
+                const response = await fetch('/profile/create-hobby/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.getAttribute('value') || '',
+                    },
+                    body: formData, // Send the data as FormData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        form.value.hobbies.push(hobby); // Add the new hobby to the user's list
+                        newHobby.value = ''; // Clear the input field
+                        alert('Hobby added successfully!');
+                    } else {
+                        alert(`${data.error}, Failed to add the hobby.`); // Handle error response
+                    }
+                } else {
+                    alert('Failed to add the hobby. Please try again.');
+                    console.log(response)
+                }
+            } catch (error) {
+                console.error('Error adding hobby:', error);
+                alert('An error occurred while adding the hobby.');
             }
         };
 

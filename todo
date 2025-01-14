@@ -31,3 +31,9 @@ Today/Tomorrow:
 -make a function that displays other users who have similiar set of hobbies (count how many hobby in common and display list of user decending order)
 -pagination so only 10 user is displayed 
 -Filter section of age e.g user between age 15-20 (make sure front end don't recieve the full list of all user and chnaging filter value trigger ajax request fir the new list of users)
+
+
+
+
+
+make new removed hobbies show on the list
