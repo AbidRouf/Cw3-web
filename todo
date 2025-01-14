@@ -1,0 +1,33 @@
+WHAT TO DO:
+
+FRONT END:
+SIMPLE STUFF:
+-Initial load up of page theres three buttons (Go to profile, login and sign up),  gp to profile should not be shown yet only login and signup ✅ 
+-On go to profile i want name split in to first name and last name ✅ 
+-Make a new page that will be used to display other user and their hobby (just a simple page with the button shown only when logged in)
+
+HARD STUFF
+-Fix log out button (app.vue -> logout func ->  i think got to do with header: csrf ✅ (app was alrdy working)
+-On go to profile it shoul dpopulate user data whos currently logged in ✅ 
+-Use the backend functions to update all user info (including password and hobbies)
+
+BACK END:
+
+What i have done which should help:
+-def profile_view 
+-def chnage_user_password 
+-def create_new_hobby
+-def update_profile
+-def get_all_hobbies
+-def add_hobby
+-def check_user_hobby
+(code been tested so should be no errors)
+
+what needs to be done:
+TODAY
+-create a remove hobby function (maybe)
+
+Today/Tomorrow:
+-make a function that displays other users who have similiar set of hobbies (count how many hobby in common and display list of user decending order)
+-pagination so only 10 user is displayed 
+-Filter section of age e.g user between age 15-20 (make sure front end don't recieve the full list of all user and chnaging filter value trigger ajax request fir the new list of users)
