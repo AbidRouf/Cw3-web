@@ -1,25 +1,27 @@
-// Example of how to use Vue Router
+import { createRouter, createWebHistory } from 'vue-router';
 
-import { createRouter, createWebHistory } from 'vue-router'
-
-// 1. Define route components.
-// These can be imported from other files
+// Import components for the routes
 import Profile from '../pages/Profile.vue';
-// import Login from '../pages/LoginComp.vue';
-// import Signup from '../pages/SignUpComp.vue';
+import Users from '../pages/Users.vue';
+// Uncomment these if you have Login and Signup components
+// import Login from '../pages/Login.vue';
+// import Signup from '../pages/Signup.vue';
 
-let base = (import.meta.env.MODE == 'development') ? import.meta.env.BASE_URL : ''
+// Determine base URL based on environment
+let base = import.meta.env.MODE === 'development' ? import.meta.env.BASE_URL : '';
 
-// 2. Define some routes
-// Each route should map to a component.
-// We'll talk about nested routes later.
+// Create router instance
 const router = createRouter({
     history: createWebHistory(base),
     routes: [
-        { path: '/profile/', name: 'Profile Page', component: Profile },
-        // { path: '/login/', name: 'login Page', component: Login },
-        // { path: '/signup/', name: 'sign up Page', component: Signup },
-    ]
-})
+        { path: '/profile/', name: 'Profile', component: Profile }, // Profile page route
+        { path: '/users/', name: 'Users', component: Users }, // Users page route
 
-export default router
+        // Uncomment these if Login and Signup pages are implemented
+        // { path: '/login/', name: 'Login', component: Login },
+        // { path: '/signup/', name: 'Signup', component: Signup },
+    ],
+});
+
+// Export the router instance
+export default router;

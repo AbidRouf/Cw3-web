@@ -7,6 +7,9 @@
             <router-link v-if="isAuthenticated" to="/profile/" class="mt-2">
                 <button class="bg-blue-500 text-white py-2 px-4 rounded">Manage Profile</button>
             </router-link>
+            <router-link v-if="isAuthenticated" to="/users/" class="mt-2">
+                <button class="bg-blue-500 text-white py-2 px-4 rounded">See Users</button>
+            </router-link>
 
             <!-- Conditional Login/Logout Links -->
             <div class="flex flex-col items-center">
@@ -14,6 +17,7 @@
                     class="px-4 py-2 mt-2 bg-blue-500 text-white rounded">Login</a>
                 <a v-if="!isAuthenticated" href="/signup/" class="px-4 py-2 mt-2 bg-blue-500 text-white rounded">Sign
                     Up</a>
+
 
                 <button v-if="isAuthenticated" @click="logout" class="px-4 py-2 mt-2 bg-red-500 text-white rounded">
                     Logout

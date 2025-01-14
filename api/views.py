@@ -8,7 +8,10 @@ from django.contrib.auth.forms import PasswordChangeForm
 from .models import Hobby
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from datetime import datetime
-import json
+from datetime import date, timedelta
+from django.core.paginator import Paginator
+
+
 
 def login_view(request: HttpRequest) -> HttpResponse:
     """
@@ -261,38 +264,43 @@ def check_user_hobby(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': 'An error occurred while checking the hobby.'}, status=500)
     
+User = get_user_model()
 
+@login_required
 def get_users(request):
     """
     Retrieve a paginated list of users filtered by age range and hobbies.
     """
-    min_age = int(request.GET.get('min_age', 0))
-    max_age = int(request.GET.get('max_age', 120))
-    hobby = request.GET.get('hobby')
+    try:
+        min_age = int(request.GET.get('min_age', 0))
+        max_age = int(request.GET.get('max_age', 120))
+        hobby = request.GET.get('hobby')
 
-    """ Filter users by hobbies and age range"""
-    users = User.objects.all()
-    if hobby:
-        users = users.filter(hobbies__name=hobby)
-    if min_age or max_age:
-        today = date.today()
-        min_dob = today - timedelta(days=max_age * 365)
-        max_dob = today - timedelta(days=min_age * 365)
-        users = users.filter(dob__range=(min_dob, max_dob))
+        # Filter users by hobbies and age range
+        users = User.objects.all()
+        if hobby:
+            users = users.filter(hobbies__name=hobby)
+        if min_age or max_age:
+            today = date.today()
+            min_dob = today - timedelta(days=max_age * 365)
+            max_dob = today - timedelta(days=min_age * 365)
+            users = users.filter(dob__range=(min_dob, max_dob))
 
-    """ this section Paginates the user list to leave 10 users per page"""
-    paginator = Paginator(users, 10)
-    page_number = request.GET.get('page', 1)
-    page = paginator.get_page(page_number)
+        # Paginate the user list
+        paginator = Paginator(users, 10)
+        page_number = request.GET.get('page', 1)
+        page = paginator.get_page(page_number)
 
- 
-    user_data = [
-        {
-            "id": user.id,
-            "username": user.username,
-            "hobbies": list(user.hobbies.values_list('name', flat=True)),
-        }
-        for user in page
-    ]
+        # Prepare user data for response
+        user_data = [
+            {
+                "id": user.id,
+                "username": user.username,
+                "hobbies": list(user.hobbies.values_list('name', flat=True)),
+            }
+            for user in page
+        ]
 
-    return JsonResponse({'users': user_data, 'has_next': page.has_next()}, status=200)
+        return JsonResponse({'users': user_data, 'has_next': page.has_next()}, status=200)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
