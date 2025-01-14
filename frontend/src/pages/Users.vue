@@ -81,8 +81,9 @@ export default defineComponent({
     name: 'OtherUsers',
     setup() {
         const isModalVisible = ref(true)
-        const users = ref([{ id: -1, username: '', hobbies: [''], dob: '01/01/2025' }]) // Loaded users
-        const selectedUser = ref({ username: '', email: '', hobbies: [''], dob: '01/01/2025' })
+        const users = ref<{ id: number; username: string; hobbies: string[]; dob: Date }[]>([]); // Array of user objects
+    const selectedUser = ref<{ username: string; email: string; hobbies: string[]; dob: Date } | null>(null); // Single user or null
+
         const hasNext = ref(false) // Whether more users are available
         const page = ref(1) // Current page
         const filters = ref({
