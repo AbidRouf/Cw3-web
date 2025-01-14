@@ -33,3 +33,18 @@ class PageView(models.Model):
         For returning the page view function count as a string
         """
         return f"Page view count: {self.count}"
+
+class friendRequests(models.Model):
+    """this is for sending and recieving friend requests"""
+    receiving = models.ForeignKey(User, on_delete=models.CASCADE, related_name="received_requests")
+    sending = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_requests")
+    requeststatus = models.CharField(
+        max_length=10,
+        choices=[('pendingrq', 'Pendingrq'), ('acceptedrq', 'Acceptedrq')],
+        default='pendingrq'
+    )
+    rqsentat = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender.username} -> {self.receiver.username} ({self.status})"
+    
