@@ -10,7 +10,7 @@ export const useUserStore = defineStore('user', {
       dob: null,
       password: '',
       confirmPassword: '',
-      hobbies: ['N/A'],
+      hobbies: [''],
     }, // Initial state
   }),
   actions: {
@@ -26,7 +26,7 @@ export const useUserStore = defineStore('user', {
         dob: null,
         password: '',
         confirmPassword: '',
-        hobbies: ['N/A'],
+        hobbies: [''],
       }; // Reset to the initial state
     },
   },

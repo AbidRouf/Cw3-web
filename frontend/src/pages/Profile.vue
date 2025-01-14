@@ -92,7 +92,7 @@
                             <select v-model="selectedExistingHobby"
                                 class="flex-1 border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
                                 <option disabled value="">Select an existing hobby</option>
-                                <option v-for="(hobby, idx) in availableHobbies" :key="idx" :value="hobby">
+                                <option v-for="(hobby, index) in availableHobbies" :key="index">
                                     {{ hobby }}
                                 </option>
                             </select>
@@ -134,7 +134,6 @@
 <script lang="ts">
 import { useUserStore } from '../store';
 import { defineComponent, ref, computed, onMounted } from 'vue';
-
 export default defineComponent({
     name: 'Profile',
     setup() {
@@ -147,8 +146,9 @@ export default defineComponent({
             dob: null,
             password: '',
             confirmPassword: '',
-            hobbies: ['N/A'],
+            hobbies: [''],
         });
+
         const name = computed({
             get: () => `${form.value.first_name} ${form.value.last_name}`.trim(),
             set: (newValue: string) => {
@@ -162,12 +162,12 @@ export default defineComponent({
         }
         const closeModal = () => {
             isModalVisible.value = false;
-            window.location.href = "/";
-        }
+            window.location.href = '/';
+        };
 
 
 
-        const originalHobbies = ref<string[]>([]); // List of popular hobbies
+        const originalHobbies = ref(['']); // List of common hobbies
         const getAllHobbies = async () => {
             try {
                 const response = await fetch('/hobbies/', {
@@ -176,7 +176,7 @@ export default defineComponent({
                 if (response.ok) {
                     const data = await response.json();
                     console.log(data)
-                    originalHobbies.value = data.hobbies
+                    originalHobbies.value = data.hobbies.map((hobby: { name: string; }) => hobby.name);
                 } else {
                     alert('Failed to get all hobbies');
                 }
@@ -201,15 +201,17 @@ export default defineComponent({
                 alert('Please select a hobby to add.');
                 return;
             }
-
+            console.log(selectedExistingHobby.value)
+            const formData = new URLSearchParams();
+            formData.append('hobby_name', selectedExistingHobby.value);
             try {
                 const response = await fetch('/profile/add-hobby/', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded', // Use form-encoded
                         'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.getAttribute('value') || '',
                     },
-                    body: JSON.stringify({ hobby: selectedExistingHobby.value }),
+                    body: formData.toString(), // Send form-encoded data
                 });
 
                 if (response.ok) {
@@ -232,7 +234,7 @@ export default defineComponent({
 
 
         const addNewHobby = async () => {
-            const hobby = newHobby.value.trim(); // Get the value of the new hobby
+            const hobby = newHobby.value.trim(); // Get the name of the new hobby
             console.log(hobby)
 
             if (!hobby) {
@@ -256,6 +258,7 @@ export default defineComponent({
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success) {
+                        originalHobbies.value.push(hobby)
                         form.value.hobbies.push(hobby); // Add the new hobby to the user's list
                         newHobby.value = ''; // Clear the input field
                         alert('Hobby added successfully!');
@@ -272,9 +275,42 @@ export default defineComponent({
             }
         };
 
-        const removeHobby = (index: number) => {
-            form.value.hobbies.splice(index, 1);
+        const removeHobby = async (index: number) => {
+            const hobbyToRemove = form.value.hobbies[index]; // Get the hobby name by index
+
+            if (!hobbyToRemove) {
+                alert('Invalid hobby selected for removal.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/profile/remove-hobby/', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.getAttribute('value') || '',
+                    },
+                    body: JSON.stringify({ hobby: hobbyToRemove }), // Send the hobby name as JSON
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        form.value.hobbies.splice(index, 1); // Remove the hobby from the local state
+                        alert(`Hobby "${hobbyToRemove}" removed successfully!`);
+                    } else {
+                        alert(data.error || 'Failed to remove the hobby.');
+                    }
+                } else {
+                    console.error('Response error:', await response.text());
+                    alert('Failed to remove the hobby. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error removing hobby:', error);
+                alert('An error occurred while removing the hobby.');
+            }
         };
+
 
         const handleSubmit = () => {
             if (!form.value.username || !form.value.first_name || !form.value.last_name || !form.value.email || !form.value.dob || !form.value.password || form.value.hobbies.length < 1) {
