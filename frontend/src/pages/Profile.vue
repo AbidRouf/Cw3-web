@@ -132,12 +132,13 @@
 </template>
 
 <script lang="ts">
-import { useUserStore } from '../store';
+import { useCSRFStore, useUserStore } from '../store';
 import { defineComponent, ref, computed, onMounted } from 'vue';
 export default defineComponent({
     name: 'Profile',
     setup() {
         const userStore = useUserStore();
+        const CSRFToken = useCSRFStore().csrfToken;
         const form = ref({
             username: '',
             first_name: '',
@@ -209,7 +210,7 @@ export default defineComponent({
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded', // Use form-encoded
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.getAttribute('value') || '',
+                        'X-CSRFToken': CSRFToken,
                     },
                     body: formData.toString(), // Send form-encoded data
                 });
@@ -250,7 +251,7 @@ export default defineComponent({
                 const response = await fetch('/profile/create-hobby/', {
                     method: 'POST',
                     headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.getAttribute('value') || '',
+                        'X-CSRFToken': CSRFToken,
                     },
                     body: formData, // Send the data as FormData
                 });
@@ -288,7 +289,7 @@ export default defineComponent({
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.getAttribute('value') || '',
+                        'X-CSRFToken': CSRFToken,
                     },
                     body: JSON.stringify({ hobby: hobbyToRemove }), // Send the hobby name as JSON
                 });
@@ -335,7 +336,7 @@ export default defineComponent({
                 const response = await fetch('/logout/', {
                     method: 'POST',
                     headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.getAttribute('value') || '',
+                        'X-CSRFToken': CSRFToken,
                     },
                 });
 

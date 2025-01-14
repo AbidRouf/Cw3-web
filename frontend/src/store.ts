@@ -31,3 +31,27 @@ export const useUserStore = defineStore('user', {
     },
   },
 });
+
+export const useCSRFStore = defineStore('csrf', {
+    state: () => ({
+        csrfToken: '', // Initialize token as empty
+    }),
+    actions: {
+        // Set CSRF token manually
+        setCSRFToken(token: string) {
+            this.csrfToken = token;
+        },
+
+        // Dynamically fetch the CSRF token
+        fetchCSRFToken() {
+            const token =
+                document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if (token) {
+                this.csrfToken = token;
+                console.log('CSRF Token fetched and stored:', this.csrfToken);
+            } else {
+                console.error('Failed to fetch CSRF token.');
+            }
+        },
+    },
+});
