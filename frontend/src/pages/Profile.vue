@@ -137,7 +137,6 @@ import { defineComponent, ref, computed } from 'vue';
 export default defineComponent({
     name: 'Profile',
     setup() {
-        // Form data (dummy backbone for now)
         const form = ref({
             username: '',
             first_name: '',
