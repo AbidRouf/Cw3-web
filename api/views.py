@@ -8,6 +8,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from .models import Hobby
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from datetime import datetime
+import json
 
 def login_view(request: HttpRequest) -> HttpResponse:
     """
@@ -221,6 +222,24 @@ def add_hobby(request):
         return JsonResponse({'success': True, 'message': 'Hobby added successfully.'}, status=200)
     except Exception as e:
         return JsonResponse({'success': False, 'error': 'Failed to add hobby.'}, status=500)
+    
+@login_required
+@require_POST
+def add_multiple_hobbies(request):
+    try:
+        data = json.loads(request.body)
+        hobby_ids = data.get('hobby_ids', [])
+        if not hobby_ids:
+            return JsonResponse({'success': False, 'error': 'No hobbies provided.'}, status=400)
+
+        hobbies = Hobby.objects.filter(id__in=hobby_ids)
+        if not hobbies.exists():
+            return JsonResponse({'success': False, 'error': 'Invalid hobby IDs provided.'}, status=400)
+        request.user.hobbies.add(*hobbies)
+        return JsonResponse({'success': True, 'message': 'Hobbies added successfully.'}, status=200)
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': 'Failed to add hobbies.'}, status=500)
     
 
 @login_required
