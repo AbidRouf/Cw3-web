@@ -39,6 +39,7 @@ urlpatterns = [
     path('profile/add-hobby/', add_hobby, name='add_hobby'),
     path('check-user-hobby/', check_user_hobby, name='check_user_hobby'),
     path('profile/add-multiple-hobbies/', add_multiple_hobbies, name='add_multiple_hobbies'),
+    path('profile/remove-hobby/', remove_hobby, name='remove_hobby'),
     path('users/', get_users, name='get_users'),
 
 ]

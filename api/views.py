@@ -304,3 +304,35 @@ def get_users(request):
     ]
 
     return JsonResponse({'users': user_data, 'has_next': page.has_next()}, status=200)
+
+
+
+@login_required
+@require_http_methods(["DELETE"])
+def remove_hobby(request):
+    # Extract hobby name from GET or DELETE body
+    if request.method == "DELETE":
+        try:
+            body = json.loads(request.body)
+            hobby_name = body.get('hobby')  # Use 'hobby' key in DELETE body
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'error': 'Invalid JSON payload.'}, status=400)
+
+    if not hobby_name:
+        return JsonResponse({'success': False, 'error': 'Hobby name is required.'}, status=400)
+
+    try:
+        # Find the hobby by name
+        hobby = Hobby.objects.filter(name=hobby_name).first()
+        if not hobby:
+            return JsonResponse({'success': False, 'error': 'Hobby does not exist in the database.'}, status=404)
+
+        # Check if the hobby is associated with the current user
+        if not request.user.hobbies.filter(id=hobby.id).exists():
+            return JsonResponse({'success': False, 'error': 'You do not have this hobby.'}, status=404)
+
+        # Remove the hobby from the user's hobbies
+        request.user.hobbies.remove(hobby)
+        return JsonResponse({'success': True, 'message': f'Hobby "{hobby_name}" has been removed successfully.'}, status=200)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': f'An error occurred: {str(e)}'}, status=500)
