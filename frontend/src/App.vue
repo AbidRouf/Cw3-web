@@ -46,6 +46,7 @@ export default defineComponent({
 
         // Fetch the CSRF token from the meta tag
         const getCSRFToken = (): string => {
+            console.log(document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'))
             return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         };
 
@@ -101,7 +102,6 @@ export default defineComponent({
                     isAuthenticated.value = false;
                     userStore.clearUser(); // Clear the user data
                     alert('Logout successful.')
-                    //   window.location.href = '/';
                 } else {
                     const errorData = await response.json();
                     console.error('Logout failed:', errorData);
