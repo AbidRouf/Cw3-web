@@ -132,11 +132,13 @@
 </template>
 
 <script lang="ts">
+import { useUserStore } from '../store';
 import { defineComponent, ref, computed } from 'vue';
 
 export default defineComponent({
     name: 'Profile',
     setup() {
+        const userStore = useUserStore();
         const form = ref({
             username: '',
             first_name: '',
@@ -155,9 +157,8 @@ export default defineComponent({
                 form.value.last_name = lastName.join(' ') || '';
             },
         }); const isModalVisible = ref(true)
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            form.value = JSON.parse(storedUser);
+        if (userStore.user) {
+            form.value = { ...userStore.user }; // Assign Pinia user data to form
         }
         const closeModal = () => {
             isModalVisible.value = false;
@@ -168,7 +169,7 @@ export default defineComponent({
 
         const originalHobbies = ref(['Gaming', 'Cooking', 'Traveling', 'Running', 'Reading', 'Swimming']); // List of popular hobbies
         const availableHobbies = computed(() =>
-        originalHobbies.value.filter(hobby => !form.value.hobbies.includes(hobby))
+            originalHobbies.value.filter(hobby => !form.value.hobbies.includes(hobby))
         );
         const selectedExistingHobby = ref('');
         const newHobby = ref('');

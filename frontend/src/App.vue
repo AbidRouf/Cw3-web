@@ -27,10 +27,14 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
+import { useUserStore } from './store';
 
 export default defineComponent({
     name: 'App',
     setup() {
+        // Access Pinia store inside the setup function
+        const userStore = useUserStore();
+
         // Reactive state for authentication
         const isAuthenticated = ref(false);
         // Show header conditionally based on the path
@@ -54,7 +58,7 @@ export default defineComponent({
                         const response = await fetch('/profile/');
                         if (response.ok) {
                             const data = await response.json();
-                            localStorage.setItem('user', JSON.stringify(data.user));
+                            userStore.setUser(data.user); // Replace localStorage.setItem
                         }
                     }
                     catch(error){
@@ -91,7 +95,7 @@ export default defineComponent({
 
                 if (response.ok) {
                     isAuthenticated.value = false;
-                    localStorage.removeItem('user');
+                    userStore.clearUser(); // Clear the user data
                     alert('Logout successful.')
                     //   window.location.href = '/';
                 } else {
