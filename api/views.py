@@ -215,14 +215,22 @@ def add_hobby(request):
     Adds an existing hobby that is already on the site the other users actual hobbies,then returns a success or error JSON response.
     """
     hobby_id = request.POST.get('hobby_id')
+    if hobby_id:
+        try:
+            hobby = Hobby.objects.get(id=hobby_id)
+            request.user.hobbies.add(hobby)
+            return JsonResponse({'success': True, 'message': 'Hobby added successfully.'}, status=200)
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': 'Failed to add hobby.'}, status=500)
+    else:
+        hobby_name = request.POST.get('hobby_name')
+        try:
+            hobby = Hobby.objects.get(name=hobby_name)
+            request.user.hobbies.add(hobby)
+            return JsonResponse({'success': True, 'message': 'Hobby added successfully.'}, status=200)
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': 'Failed to add hobby.'}, status=500)
 
-    try:
-        hobby = Hobby.objects.get(id=hobby_id)
-        request.user.hobbies.add(hobby)
-        return JsonResponse({'success': True, 'message': 'Hobby added successfully.'}, status=200)
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': 'Failed to add hobby.'}, status=500)
-    
 @login_required
 @require_POST
 def add_multiple_hobbies(request):
