@@ -370,7 +370,7 @@ def get_users_with_similar_hobbies(request):
 
     # Get filter parameters
     min_age = int(request.GET.get('min_age', 0))  
-    max_age = int(request.GET.get('max_age', 120)) 
+    max_age = int(request.GET.get('max_age', 300)) 
 
     # Calculate date of birth range
     today = date.today()

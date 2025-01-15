@@ -1,6 +1,6 @@
 <template>
-    <div v-if="isModalVisible" class="modal fade show" id="Modal" tabindex="-1"
-        aria-labelledby="ModalLabel" style="display: block;" data-keyboard="true">
+    <div v-if="isModalVisible" class="modal fade show" id="Modal" tabindex="-1" aria-labelledby="ModalLabel"
+        style="display: block;" data-keyboard="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -23,34 +23,31 @@
                             <div class="grid grid-cols-1 gap-4">
                                 <!-- Userame Field -->
                                 <div>
-                                    <label class="block text-gray-700 font-medium mb-1" for="name">userame:</label>
-                                    <input id="name" type="text" v-model="form.username" placeholder="Your full name"
-                                        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                         />
+                                    <label class="block text-gray-700 font-medium mb-1" for="name">Userame:</label>
+                                    <p
+                                        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-200">
+                                        {{ form.username }}</p>
                                 </div>
 
                                 <!-- Name Field -->
                                 <div>
                                     <label class="block text-gray-700 font-medium mb-1" for="name">Name:</label>
                                     <input id="name" type="text" v-model="name" placeholder="Your full name"
-                                        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                         />
+                                        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
                                 </div>
 
                                 <!-- Email Field -->
                                 <div>
                                     <label class="block text-gray-700 font-medium mb-1" for="email">Email:</label>
                                     <input id="email" type="email" v-model="form.email" placeholder="you@example.com"
-                                        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                         />
+                                        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
                                 </div>
 
                                 <!-- Date of Birth Field -->
                                 <div>
                                     <label class="block text-gray-700 font-medium mb-1" for="dob">Date of Birth:</label>
                                     <input id="dob" type="date" v-model="form.dob"
-                                        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                         />
+                                        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
                                 </div>
 
                                 <!-- Password Fields -->
@@ -120,11 +117,6 @@
                             Save
                         </button>
                     </div>
-
-                    <!-- Feedback (Placeholder) -->
-                    <div v-if="feedbackMessage" class="mt-4 text-center text-green-600">
-                        {{ feedbackMessage }}
-                    </div>
                 </div>
             </div>
         </div>
@@ -144,7 +136,7 @@ export default defineComponent({
             first_name: '',
             last_name: '',
             email: '',
-            dob: null,
+            dob: Date,
             password: '',
             confirmPassword: '',
             hobbies: [''],
@@ -194,7 +186,6 @@ export default defineComponent({
 
         const selectedExistingHobby = ref('');
         const newHobby = ref('');
-        const feedbackMessage = ref('');
 
 
         const addExistingHobby = async () => {
@@ -313,19 +304,86 @@ export default defineComponent({
         };
 
 
-        const handleSubmit = () => {
-            if (!form.value.username || !form.value.first_name || !form.value.last_name || !form.value.email || !form.value.dob || !form.value.password || form.value.hobbies.length < 1) {
-                alert('Fill in all fields');
-                return;
-            }
+        const handleSubmit = async () => {
             if (form.value.password !== form.value.confirmPassword) {
                 alert('Passwords do not match.');
                 return;
             }
+            try {
+                let profile = false
+                let password = false
+                // Create a form-encoded payload
+                const formData = new URLSearchParams({
+                    first_name: form.value.first_name,
+                    last_name: form.value.last_name,
+                    email: form.value.email,
+                    dob: form.value.dob.toString(),
+                });
+                const response = await fetch('/profile/update/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': CSRFToken,
+                    },
+                    body: formData.toString(),
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        profile = true
+                    } else {
+                        alert(data.error || 'Failed to update profile.');
+                    }
+                } else {
+                    console.error('Response error:', await response.text());
+                    alert('Failed to update the profile. Please try again.');
+                }
+                if (form.value.password) {
+                    const formPasswordData = new URLSearchParams({
+                        new_password: form.value.password,
+                        confirm_password: form.value.confirmPassword,
+                    })
+                    const passwordresponse = await fetch('/profile/change-password/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': CSRFToken,
+                        },
+                        body: formPasswordData.toString(),
+                    });
+                    if (passwordresponse.ok) {
+                        const data = await passwordresponse.json();
+                        if (data.success) {
+                            password = true
+                        } else {
+                            alert(data.error || 'Failed to update password.');
+                        }
+                    } else {
+                        console.error('Response error:', await response.text());
+                        alert('Failed to update the profile. Please try again.');
+                    }
+                    if (password && profile) {
+                        alert("Profile and password updated successfully!")
+                        setTimeout(() => {
+                            closeModal();
+                        }, 200);
+                        return
+                    }
+                }
+                if (profile) {
+                    alert("Profile updated successfully!")
+                    setTimeout(() => {
+                        closeModal();
+                    }, 200);
+                    return
+                }
+            } catch (error) {
+                console.error('Error submitting profile:', error);
+                alert('An error occurred while updating the profile.');
+            }
+
             console.log('Profile data:', form.value);
-            feedbackMessage.value = 'Profile updated successfully!';
             setTimeout(() => {
-                feedbackMessage.value = '';
                 closeModal()
             }, 3000);
         };
@@ -359,7 +417,6 @@ export default defineComponent({
             addNewHobby,
             removeHobby,
             handleSubmit,
-            feedbackMessage,
             // logout,
             closeModal,
             isModalVisible,
