@@ -133,7 +133,7 @@
 
 <script lang="ts">
 import { useCSRFStore, useUserStore } from '../store';
-import { defineComponent, ref, computed, onMounted } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 export default defineComponent({
     name: 'Profile',
     setup() {
@@ -309,25 +309,25 @@ export default defineComponent({
             }, 3000);
         };
 
-        // Logout functionality
-        const logout = async () => {
-            try {
-                const response = await fetch('/logout/', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': CSRFToken,
-                    },
-                });
+        // // Logout functionality
+        // const logout = async () => {
+        //     try {
+        //         const response = await fetch('/logout/', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'X-CSRFToken': CSRFToken,
+        //             },
+        //         });
 
-                if (response.ok) {
-                    window.location.href = '/login/';
-                } else {
-                    alert('Failed to log out. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error during logout:', error);
-            }
-        };
+        //         if (response.ok) {
+        //             window.location.href = '/login/';
+        //         } else {
+        //             alert('Failed to log out. Please try again.');
+        //         }
+        //     } catch (error) {
+        //         console.error('Error during logout:', error);
+        //     }
+        // };
 
         return {
             form,
@@ -339,7 +339,7 @@ export default defineComponent({
             removeHobby,
             handleSubmit,
             feedbackMessage,
-            logout,
+            // logout,
             closeModal,
             isModalVisible,
             name,

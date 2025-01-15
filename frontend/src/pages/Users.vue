@@ -31,7 +31,7 @@
                             </div>
 
                             <!-- User List -->
-                            <ul v-if="users.length > 0">
+                            <ul v-if="users.length > 0 && users[0].id !== -1">
                                 <li v-for="user in users" :key="user.id">
                                     {{ user.username }} - Hobbies: {{ user.hobbies.join(', ') }}
                                 </li>
@@ -47,16 +47,17 @@
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title ms-3" id="userModalLabel">{{ selectedUser.username
+                                            <h5 class="modal-title ms-3" id="userModalLabel">{{
+                                                selectedUser.username
                                                 }}'s Profile</h5>
                                             <button type="button" class="btn-close" aria-label="Close"
                                                 @click="closeModal"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <h2 class="text-2xl font-semibold text-gray-700 mb-4">User Details</h2>
-                                            <p><strong>Email:</strong> {{ selectedUser.email }}</p>
-                                            <p><strong>Age:</strong> {{ selectedUser.age }}</p>
-                                            <p><strong>Hobbies:</strong> {{ selectedUser.hobbies.join(', ') }}</p>
+                                            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Other Users</h2>
+                                            <p><strong>Age:</strong> {{ selectedUser.dob }}</p>
+                                            <p><strong>Hobbies:</strong> {{ selectedUser.hobbies.join(', ') }}
+                                            </p>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
@@ -80,7 +81,8 @@ export default defineComponent({
     name: 'OtherUsers',
     setup() {
         const isModalVisible = ref(true)
-        const users = ref([{ username: '', hobbies: [''], dob: '01/01/2025' }]) // Loaded users
+        const users = ref([{ id: -1, username: '', hobbies: [''], dob: '01/01/2025' }]) // Loaded users
+        const selectedUser = ref({ username: '', email: '', hobbies: [''], dob: '01/01/2025' })
         const hasNext = ref(false) // Whether more users are available
         const page = ref(1) // Current page
         const filters = ref({
@@ -88,7 +90,7 @@ export default defineComponent({
             maxAge: 300, // Maximum age filter
             hobby: '', // Hobby filter
         })
-        const selectedUser = ref(null)
+        // const selectedUser = ref(null)
         const fetchUsers = async () => {
             try {
                 const params = new URLSearchParams({
@@ -112,6 +114,7 @@ export default defineComponent({
                 alert('Failed to fetch users. Please try again.');
             }
         }
+        fetchUsers()
         // Load more users when the button is clicked
         const loadMore = () => {
             page.value += 1;
@@ -126,6 +129,19 @@ export default defineComponent({
         // Close the modal
         const closeModal = () => {
             isModalVisible.value = false;
+            window.location.href = "/";
         }
+        return {
+            closeModal,
+            applyFilters,
+            loadMore,
+            isModalVisible,
+            users,
+            hasNext,
+            page,
+            filters,
+            selectedUser,
+        };
     },
 });
+</script>
