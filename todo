@@ -1,39 +1,16 @@
-WHAT TO DO:
+LEARN OUTS:
 
-FRONT END:
-SIMPLE STUFF:
--Initial load up of page theres three buttons (Go to profile, login and sign up),  gp to profile should not be shown yet only login and signup ✅ 
--On go to profile i want name split in to first name and last name ✅ 
--Make a new page that will be used to display other user and their hobby (just a simple page with the button shown only when logged in)
+1. Users should then be able to send a "friend request" to another user. These requests should also be sent via ajax. Requests need to be approved by the other user before the two users become friends.
 
-HARD STUFF
--Fix log out button (app.vue -> logout func ->  i think got to do with header: csrf ✅ (app was alrdy working)
--On go to profile it shoul dpopulate user data whos currently logged in ✅ 
--Use the backend functions to update all user info (including password and hobbies)
+(All ajax requests must be done using the fetch API (with async-await) and Vue to reactively update the page.)
 
-BACK END:
-
-What i have done which should help:
--def profile_view 
--def chnage_user_password 
--def create_new_hobby
--def update_profile
--def get_all_hobbies
--def add_hobby
--def check_user_hobby
-(code been tested so should be no errors)
-
-what needs to be done:
-TODAY
--create a remove hobby function (maybe)
-
-Today/Tomorrow:
--make a function that displays other users who have similiar set of hobbies (count how many hobby in common and display list of user decending order)
--pagination so only 10 user is displayed 
--Filter section of age e.g user between age 15-20 (make sure front end don't recieve the full list of all user and chnaging filter value trigger ajax request fir the new list of users)
+2. Your project should include automated tests that test: (1) account creation / signup, (2) login and (3) editing all the user's data on their profile page, (4) users page, with testing of filtering by age, (5) sending a friend request, (6) login as the other user and accept the friend requests sent. You should use selenium-based tests for full end-to-end (E2E) testing.
 
 
+AT THE END:
+Outcome: Once fully tested, your application should be deployed to the EECS OpenShift platform (to be discussed in week 8) — one deployed app per team. Make sure your submitted application has at least 20 test users and at least 10 hobbies. Each group should submit the code including a README file which should contain:
 
-
-
-make new removed hobbies show on the list
+list of group members, with a short description (one sentence) of what each member was assigned to do, and what they actually did in terms of contributing to the final deliverable
+the URL of your deployed application (if deployed)
+the username and password for the admin user
+the username and passwords of at least 5 of the test users
