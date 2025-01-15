@@ -2,7 +2,7 @@
     <div v-if="isModalVisible" class="modal fade show" id="Modal" tabindex="-1" aria-labelledby="ModalLabel"
         style="display: block;" data-keyboard="true">
         <div class="modal-dialog modal-xl">
-            <div class="modal-content">
+            <div class="modal-content min-h-32">
                 <div class="modal-header">
                     <h5 class="modal-title ms-3" id="ModalLabel">Other Users</h5>
                     <button type="button" class="btn-close" @click="closeModal"></button>
@@ -154,5 +154,12 @@ export default defineComponent({
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 32rem; /* Minimum height of 32rem */
+    background-color: rgba(0, 0, 0, 0.5); /* Optional: dim background */
+}
+
+.modal-content {
+    max-height: 90vh; /* Ensures the modal doesn't exceed viewport height */
+    overflow-y: auto; /* Adds scroll for overflowing content */
 }
 </style>
