@@ -2,25 +2,25 @@
     <div id="app">
         <header v-if="showHeader" class="flex flex-col items-center justify-center h-auto mt-10 space-y-6">
             <!-- Application Title -->
-            <h1 class="text-5xl font-bold text-blue-600 text-center mb-4">Hobbies App</h1>
+            <h1 class="text-5xl font-bold text-red-600 text-center mb-4">Hobbies App</h1>
 
             <!-- Navigation Links -->
             <div class="flex flex-col space-y-4">
                 <router-link v-if="isAuthenticated" to="/profile/">
                     <button
-                        class="w-48 min-w-16 bg-gradient-to-r from-blue-500 to-black-500 text-black py-3 px-6 text-lg rounded-lg shadow-md hover:from-blue-600 hover:to-white-600 transition-all duration-300">
+                        class="w-48 min-w-16 bg-gradient-to-r from-blue-500 to-gray-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-gray-600 hover:to-gray-600 transition-all duration-300">
                         Manage Profile
                     </button>
                 </router-link>
                 <router-link v-if="isAuthenticated" to="/users/">
                     <button
-                        class="w-48 min-w-16 bg-gradient-to-r from-gray-500 to-red-500 text-black py-3 px-6 text-lg rounded-lg shadow-md hover:from-black-600 hover:to-red-600 transition-all duration-300">
+                        class="w-48 min-w-16 bg-gradient-to-r from-blue-500 to-gray-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-gray-600 hover:to-gray-600 transition-all duration-300">
                         See Users
                     </button>
                 </router-link>
                 <router-link v-if="isAuthenticated" to="/requests/">
                     <button
-                        class="w-48 min-w-16 bg-gradient-to-r from-orange-500 to-white-500 text-black py-3 px-6 text-lg rounded-lg shadow-md hover:from-orange-600 hover:to-white-600 transition-all duration-300">
+                        class="w-48 min-w-16 bg-gradient-to-r from-blue-500 to-gray-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-gray-600 hover:to-gray-600 transition-all duration-300">
                         See Requests
                     </button>
                 </router-link>
