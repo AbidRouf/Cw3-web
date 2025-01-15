@@ -1,22 +1,25 @@
 <template>
-    <div v-if="isModalVisible" class="modal fade show" id="Modal" tabindex="-1" aria-labelledby="ModalLabel"
-        style="display: block;" data-keyboard="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title ms-3" id="ModalLabel">See Requests</h5>
-                    <button type="button" class="btn-close" aria-label="Close" @click="closeModal"></button>
-                </div>
-                <div>
-                    <h3>Pending Friend Requests</h3>
-                    <ul>
-                        <li v-for="request in friendRequests" :key="request.id">
-                            {{ request.from_username }} sent you a friend request on {{ request.sent_on }}
-                            <button @click="acceptFriendRequest(request.id)">Accept</button>
-                            <button @click="declineFriendRequest(request.id)">Decline</button>
-                        </li>
-                    </ul>
-                </div>
+    <div v-if="isModalVisible" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden w-full max-w-2xl">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h5 class="text-xl font-semibold" id="ModalLabel">See Requests</h5>
+                <button type="button" class="text-gray-400 hover:text-gray-600" aria-label="Close" @click="closeModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="px-6 py-4">
+                <h3 class="text-lg font-medium mb-4">Pending Friend Requests</h3>
+                <ul class="space-y-4">
+                    <li v-for="request in friendRequests" :key="request.id" class="flex justify-between items-center">
+                        <span>{{ request.from_username }} sent you a friend request on {{ request.sent_on }}</span>
+                        <div class="space-x-2">
+                            <button @click="acceptFriendRequest(request.id)" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Accept</button>
+                            <button @click="declineFriendRequest(request.id)" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Decline</button>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
