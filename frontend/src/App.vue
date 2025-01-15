@@ -7,17 +7,17 @@
             <!-- Navigation Links -->
             <div class="flex flex-col space-y-4">
                 <router-link v-if="isAuthenticated" to="/profile/">
-                    <button class="bg-gradient-to-r from-blue-500 to-red-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-blue-600 hover:to-indigo-600 transition-all duration-300">
+                    <button class="bg-gradient-to-r from-blue-500 to-black-500 text-black py-3 px-6 text-lg rounded-lg shadow-md hover:from-blue-600 hover:to-yellow-600 transition-all duration-300">
                         Manage Profile
                     </button>
                 </router-link>
                 <router-link v-if="isAuthenticated" to="/users/">
-                    <button class="bg-gradient-to-r from-green-500 to-black-500 text-black py-3 px-6 text-lg rounded-lg shadow-md hover:from-green-600 hover:to-teal-600 transition-all duration-300">
+                    <button class="bg-gradient-to-r from-gray-500 to-red-500 text-black py-3 px-6 text-lg rounded-lg shadow-md hover:from-green-600 hover:to-red-600 transition-all duration-300">
                         See Users
                     </button>
                 </router-link>
                 <router-link v-if="isAuthenticated" to="/requests/">
-                    <button class="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-purple-600 hover:to-pink-600 transition-all duration-300">
+                    <button class="bg-gradient-to-r from-orange-500 to-white-500 text-black py-3 px-6 text-lg rounded-lg shadow-md hover:from-purple-600 hover:to-pink-600 transition-all duration-300">
                         See Requests
                     </button>
                 </router-link>
