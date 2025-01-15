@@ -6,12 +6,12 @@ from django.views.decorators.http import require_http_methods, require_POST
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.forms import PasswordChangeForm
 from .models import Hobby
+from collections import Counter
+from django.db.models import  Count, Q
 from django.http import HttpRequest, HttpResponse, JsonResponse
-from datetime import datetime
-from datetime import date, timedelta
-from django.core.paginator import Paginator
+from datetime import datetime,date , timedelta
 import json
-
+from django.core.paginator import Paginator
 
 
 def login_view(request: HttpRequest) -> HttpResponse:
@@ -274,45 +274,40 @@ def check_user_hobby(request):
         return JsonResponse({'success': False, 'error': 'An error occurred while checking the hobby.'}, status=500)
     
 User = get_user_model()
-
-@login_required
 def get_users(request):
     """
     Retrieve a paginated list of users filtered by age range and hobbies.
     """
-    try:
-        min_age = int(request.GET.get('min_age', 0))
-        max_age = int(request.GET.get('max_age', 120))
-        hobby = request.GET.get('hobby')
+    min_age = int(request.GET.get('min_age', 0))
+    max_age = int(request.GET.get('max_age', 120))
+    hobby = request.GET.get('hobby')
 
-        # Filter users by hobbies and age range
-        users = User.objects.all()
-        if hobby:
-            users = users.filter(hobbies__name=hobby)
-        if min_age or max_age:
-            today = date.today()
-            min_dob = today - timedelta(days=max_age * 365)
-            max_dob = today - timedelta(days=min_age * 365)
-            users = users.filter(dob__range=(min_dob, max_dob))
+    """ Filter users by hobbies and age range"""
+    users = User.objects.all()
+    if hobby:
+        users = users.filter(hobbies__name=hobby)
+    if min_age or max_age:
+        today = date.today()
+        min_dob = today - timedelta(days=max_age * 365)
+        max_dob = today - timedelta(days=min_age * 365)
+        users = users.filter(dob__range=(min_dob, max_dob))
 
-        # Paginate the user list
-        paginator = Paginator(users, 10)
-        page_number = request.GET.get('page', 1)
-        page = paginator.get_page(page_number)
+    """ this section Paginates the user list to leave 10 users per page"""
+    paginator = Paginator(users, 10)
+    page_number = request.GET.get('page', 1)
+    page = paginator.get_page(page_number)
 
-        # Prepare user data for response
-        user_data = [
-            {
-                "id": user.id,
-                "username": user.username,
-                "hobbies": list(user.hobbies.values_list('name', flat=True)),
-            }
-            for user in page
-        ]
+ 
+    user_data = [
+        {
+            "id": user.id,
+            "username": user.username,
+            "hobbies": list(user.hobbies.values_list('name', flat=True)),
+        }
+        for user in page
+    ]
 
-        return JsonResponse({'users': user_data, 'has_next': page.has_next()}, status=200)
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+    return JsonResponse({'users': user_data, 'has_next': page.has_next()}, status=200)
 
 
 
@@ -345,3 +340,47 @@ def remove_hobby(request):
         return JsonResponse({'success': True, 'message': f'Hobby "{hobby_name}" has been removed successfully.'}, status=200)
     except Exception as e:
         return JsonResponse({'success': False, 'error': f'An error occurred: {str(e)}'}, status=500)
+    
+
+@login_required
+def get_users_with_similar_hobbies(request):
+    """
+    Retrieve a paginated list of users with the most similar hobbies, filtered by age range.
+    """
+    current_user = request.user
+
+    # Get filter parameters
+    min_age = int(request.GET.get('min_age', 0))  
+    max_age = int(request.GET.get('max_age', 120)) 
+
+    # Calculate date of birth range
+    today = date.today()
+    min_dob = today - timedelta(days=max_age * 365)
+    max_dob = today - timedelta(days=min_age * 365)
+
+    # Get the current user's hobbies
+    current_user_hobbies = current_user.hobbies.all()
+
+    # Filter users
+    users = (
+        User.objects.exclude(id=current_user.id)  
+        .filter(dob__range=(min_dob, max_dob))  
+        .annotate(common_hobby_count=Count("hobbies", filter=Q(hobbies__in=current_user_hobbies)))
+        .order_by("-common_hobby_count", "id") 
+    )
+
+    paginator = Paginator(users, 10)
+    page_number = request.GET.get("page", 1)
+    page = paginator.get_page(page_number)
+
+    
+    user_data = [
+        {
+            "id": user.id,
+            "username": user.username,
+            "common_hobby_count": user.common_hobby_count,
+            "hobbies": list(user.hobbies.values_list("name", flat=True)),
+        }
+        for user in page
+    ]
+    return JsonResponse({"users": user_data, "has_next": page.has_next()}, status=200)
