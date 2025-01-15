@@ -44,7 +44,10 @@ class friendRequests(models.Model):
         default='pendingrq'
     )
     rqsentat = models.DateTimeField(auto_now_add=True)
-
     def __str__(self):
-        return f"{self.sender.username} -> {self.receiver.username} ({self.status})"
+        """
+        Returns the friend request details as a string
+        """
+        return f"{self.sending.username} -> {self.receiving.username} ({self.requeststatus})"
+
     

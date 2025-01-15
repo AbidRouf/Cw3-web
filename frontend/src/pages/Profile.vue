@@ -1,10 +1,10 @@
 <template>
-    <div v-if="isModalVisible" class="modal fade show" id="commentModal" tabindex="-1"
-        aria-labelledby="commentModalLabel" style="display: block;" data-keyboard="true">
+    <div v-if="isModalVisible" class="modal fade show" id="Modal" tabindex="-1"
+        aria-labelledby="ModalLabel" style="display: block;" data-keyboard="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title ms-3" id="commentModalLabel">Manage Profile</h5>
+                    <h5 class="modal-title ms-3" id="ModalLabel">Manage Profile</h5>
                     <button type="button" class="btn-close" aria-label="Close" @click="closeModal"></button>
                 </div>
                 <div class="max-w-3xl p-6 bg-white rounded-lg">
@@ -133,7 +133,7 @@
 
 <script lang="ts">
 import { useCSRFStore, useUserStore } from '../store';
-import { defineComponent, ref, computed, onMounted } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 export default defineComponent({
     name: 'Profile',
     setup() {
@@ -330,25 +330,25 @@ export default defineComponent({
             }, 3000);
         };
 
-        // Logout functionality
-        const logout = async () => {
-            try {
-                const response = await fetch('/logout/', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': CSRFToken,
-                    },
-                });
+        // // Logout functionality
+        // const logout = async () => {
+        //     try {
+        //         const response = await fetch('/logout/', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'X-CSRFToken': CSRFToken,
+        //             },
+        //         });
 
-                if (response.ok) {
-                    window.location.href = '/login/';
-                } else {
-                    alert('Failed to log out. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error during logout:', error);
-            }
-        };
+        //         if (response.ok) {
+        //             window.location.href = '/login/';
+        //         } else {
+        //             alert('Failed to log out. Please try again.');
+        //         }
+        //     } catch (error) {
+        //         console.error('Error during logout:', error);
+        //     }
+        // };
 
         return {
             form,
@@ -360,7 +360,7 @@ export default defineComponent({
             removeHobby,
             handleSubmit,
             feedbackMessage,
-            logout,
+            // logout,
             closeModal,
             isModalVisible,
             name,

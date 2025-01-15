@@ -48,7 +48,7 @@ export const useCSRFStore = defineStore('csrf', {
                 document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
             if (token) {
                 this.csrfToken = token;
-                console.log('CSRF Token fetched and stored:', this.csrfToken);
+                // console.log('CSRF Token fetched and stored:', this.csrfToken);
             } else {
                 console.error('Failed to fetch CSRF token.');
             }
