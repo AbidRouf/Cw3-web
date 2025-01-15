@@ -23,16 +23,15 @@ class User(AbstractUser):
         verbose_name="Date of Birth", null=True, blank=True
     )
     hobbies = models.ManyToManyField(Hobby)
-    
 
 class FriendRequest(models.Model):
     from_user = models.ForeignKey(User, related_name='friend_requests_sent', on_delete=models.CASCADE)
     to_user = models.ForeignKey(User, related_name='friend_requests_received', on_delete=models.CASCADE)
-    is_active = models.BooleanField(default=True)
-
+    timestamp = models.DateTimeField(auto_now_add=True)
+    accepted = models.BooleanField(default=False)
+    
     def __str__(self):
         return f'From {self.from_user} to {self.to_user}'
-
 
 class PageView(models.Model):
     """

@@ -43,5 +43,6 @@ urlpatterns = [
     path('users/', get_users, name='get_users'),
     path('users/similar-hobbies/', get_users_with_similar_hobbies, name='get_users_with_similar_hobbies'),
     path('api/send-friend-request/', send_friend_request, name='send_friend_request'),
+    path('api/friend-requests/', list_friend_requests, name='list_friend_requests'),
 
 ]

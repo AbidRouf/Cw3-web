@@ -10,6 +10,9 @@
             <router-link v-if="isAuthenticated" to="/users/" class="mt-2">
                 <button class="bg-blue-500 text-white py-2 px-4 rounded">See Users</button>
             </router-link>
+            <router-link v-if="isAuthenticated" to="/requests/" class="mt-2">
+                <button class="bg-blue-500 text-white py-2 px-4 rounded">See requests</button>
+            </router-link>
 
             <!-- Conditional Login/Logout Links -->
             <div class="flex flex-col items-center">

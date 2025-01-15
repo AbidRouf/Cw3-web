@@ -17,6 +17,25 @@ from django.views.decorators.http import require_POST
 from .models import Hobby, FriendRequest  # Assuming FriendRequest is defined in the same models.py file as Hobby
 
 @login_required
+def list_friend_requests(request):
+    if request.method == "GET":
+        # Fetch all pending friend requests to the current user
+        friend_requests = FriendRequest.objects.filter(to_user=request.user, accepted=False)
+        
+        requests_data = [
+            {
+                "id": fr.id,
+                "from_user_id": fr.from_user.id,
+                "from_username": fr.from_user.username,
+                "sent_on": fr.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+            }
+            for fr in friend_requests
+        ]
+        
+        return JsonResponse({"friend_requests": requests_data}, safe=False, status=200)
+
+
+@login_required
 @require_POST
 def send_friend_request(request):
     to_user_id = request.POST.get('to_user_id')
