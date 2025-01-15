@@ -1,33 +1,51 @@
 <template>
     <div id="app">
-        <header v-if="showHeader" class="flex flex-col items-center justify-center h-20 mt-24">
-            <h1 class="text-red-500 text-center">Hobbies App</h1>
+        <header v-if="showHeader" class="flex flex-col items-center justify-center h-auto mt-10 space-y-6">
+            <!-- Application Title -->
+            <h1 class="text-5xl font-bold text-blue-600 text-center mb-4">Hobbies App</h1>
 
             <!-- Navigation Links -->
-            <router-link v-if="isAuthenticated" to="/profile/" class="mt-2">
-                <button class="bg-blue-500 text-white py-2 px-4 rounded">Manage Profile</button>
-            </router-link>
-            <router-link v-if="isAuthenticated" to="/users/" class="mt-2">
-                <button class="bg-blue-500 text-white py-2 px-4 rounded">See Users</button>
-            </router-link>
-            <router-link v-if="isAuthenticated" to="/requests/" class="mt-2">
-                <button class="bg-blue-500 text-white py-2 px-4 rounded">See requests</button>
-            </router-link>
+            <div class="flex flex-col space-y-4">
+                <router-link v-if="isAuthenticated" to="/profile/">
+                    <button class="bg-gradient-to-r from-blue-500 to-red-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-blue-600 hover:to-indigo-600 transition-all duration-300">
+                        Manage Profile
+                    </button>
+                </router-link>
+                <router-link v-if="isAuthenticated" to="/users/">
+                    <button class="bg-gradient-to-r from-green-500 to-black-500 text-black py-3 px-6 text-lg rounded-lg shadow-md hover:from-green-600 hover:to-teal-600 transition-all duration-300">
+                        See Users
+                    </button>
+                </router-link>
+                <router-link v-if="isAuthenticated" to="/requests/">
+                    <button class="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-purple-600 hover:to-pink-600 transition-all duration-300">
+                        See Requests
+                    </button>
+                </router-link>
+            </div>
 
             <!-- Conditional Login/Logout Links -->
-            <div class="flex flex-col items-center">
-                <a v-if="!isAuthenticated" href="/login/"
-                    class="px-4 py-2 mt-2 bg-blue-500 text-white rounded">Login</a>
-                <a v-if="!isAuthenticated" href="/signup/" class="px-4 py-2 mt-2 bg-blue-500 text-white rounded">Sign
-                    Up</a>
-
-
-                <button v-if="isAuthenticated" @click="logout" class="px-4 py-2 mt-2 bg-red-500 text-white rounded">
+            <div class="flex flex-col items-center space-y-4">
+                <a v-if="!isAuthenticated" href="/login/">
+                    <button class="bg-blue-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:bg-blue-600 transition-all duration-300">
+                        Login
+                    </button>
+                </a>
+                <a v-if="!isAuthenticated" href="/signup/">
+                    <button class="bg-green-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:bg-green-600 transition-all duration-300">
+                        Sign Up
+                    </button>
+                </a>
+                <button
+                    v-if="isAuthenticated"
+                    @click="logout"
+                    class="bg-red-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:bg-red-600 transition-all duration-300"
+                >
                     Logout
                 </button>
             </div>
         </header>
 
+        <!-- Main Content -->
         <router-view />
     </div>
 </template>
@@ -39,40 +57,31 @@ import { useUserStore } from './store';
 export default defineComponent({
     name: 'App',
     setup() {
-        // Access Pinia store inside the setup function
         const userStore = useUserStore();
-
-        // Reactive state for authentication
         const isAuthenticated = ref(false);
-        // Show header conditionally based on the path
         const showHeader = computed(() => location.pathname === '/');
 
-        // Fetch the CSRF token from the meta tag
         const getCSRFToken = (): string => {
-            console.log(document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'))
             return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         };
 
-        // Check authentication status
         const checkAuthStatus = async () => {
             try {
                 const response = await fetch('/auth-status/');
                 if (response.ok) {
                     const data = await response.json();
                     isAuthenticated.value = data.isAuthenticated;
-                    if (isAuthenticated.value){
-                        console.log("test")
-                        try{
-                        const response = await fetch('/profile/');
-                        if (response.ok) {
-                            const data = await response.json();
-                            userStore.setUser(data.user); // Replace localStorage.setItem
+                    if (isAuthenticated.value) {
+                        try {
+                            const response = await fetch('/profile/');
+                            if (response.ok) {
+                                const data = await response.json();
+                                userStore.setUser(data.user);
+                            }
+                        } catch (error) {
+                            console.error('Error getting profile data:', error);
                         }
                     }
-                    catch(error){
-                        console.error('Error getting profile data:', error)
-                    }
-                }
                 } else {
                     isAuthenticated.value = false;
                 }
@@ -82,16 +91,12 @@ export default defineComponent({
             }
         };
 
-        // Handle logout functionality
         const logout = async () => {
             const csrfToken = getCSRFToken();
-
             if (!csrfToken) {
-                console.error('CSRF token is missing. Logout cannot proceed.');
                 alert('CSRF token is missing. Please refresh the page and try again.');
                 return;
             }
-
             try {
                 const response = await fetch('/logout/', {
                     method: 'POST',
@@ -100,14 +105,11 @@ export default defineComponent({
                         'Content-Type': 'application/json',
                     },
                 });
-
                 if (response.ok) {
                     isAuthenticated.value = false;
-                    userStore.clearUser(); // Clear the user data
-                    alert('Logout successful.')
+                    userStore.clearUser();
+                    alert('Logout successful.');
                 } else {
-                    const errorData = await response.json();
-                    console.error('Logout failed:', errorData);
                     alert('Logout failed. Please try again.');
                 }
             } catch (error) {
@@ -116,7 +118,6 @@ export default defineComponent({
             }
         };
 
-        // Check authentication status on app load
         checkAuthStatus();
 
         return { showHeader, isAuthenticated, logout };
@@ -124,6 +125,10 @@ export default defineComponent({
 });
 </script>
 
-<style>
-/* Add any custom styles here */
+<style scoped>
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9fafb; /* Light background for better contrast */
+    color: #1a202c; /* Default text color */
+}
 </style>
