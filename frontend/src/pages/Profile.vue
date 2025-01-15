@@ -1,10 +1,10 @@
 <template>
-    <div v-if="isModalVisible" class="modal fade show" id="commentModal" tabindex="-1"
-        aria-labelledby="commentModalLabel" style="display: block;" data-keyboard="true">
+    <div v-if="isModalVisible" class="modal fade show" id="Modal" tabindex="-1"
+        aria-labelledby="ModalLabel" style="display: block;" data-keyboard="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title ms-3" id="commentModalLabel">Manage Profile</h5>
+                    <h5 class="modal-title ms-3" id="ModalLabel">Manage Profile</h5>
                     <button type="button" class="btn-close" aria-label="Close" @click="closeModal"></button>
                 </div>
                 <div class="max-w-3xl p-6 bg-white rounded-lg">
