@@ -14,6 +14,7 @@ import json
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from .models import Hobby, FriendRequest  # Assuming FriendRequest is defined in the same models.py file as Hobby
 
 @login_required
 @require_POST
