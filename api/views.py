@@ -192,8 +192,8 @@ def update_profile(request):
     last_name = request.POST.get('last_name')
     email = request.POST.get('email')
     dob = request.POST.get('dob')
-
-    try:
+    username = request.POST.get('username')
+    try:            
         if first_name:
             request.user.first_name = first_name
         if last_name:
@@ -202,6 +202,12 @@ def update_profile(request):
             request.user.email = email
         if dob:
             request.user.dob = datetime.strptime(dob, '%Y-%m-%d').date()
+        request.user.save()
+        if username:
+            # Check if the new username is already taken by another user
+            if request.user.username != username and User.objects.filter(username=username).exists():
+                return JsonResponse({'success': False, 'error': 'Username is already taken.'}, status=200)
+            request.user.username = username  # Update the username if it passes validation
         request.user.save()
         return JsonResponse({'success': True, 'message': 'Profile updated successfully.'}, status=200)
     except Exception as e:

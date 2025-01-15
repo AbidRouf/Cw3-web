@@ -24,9 +24,9 @@
                                 <!-- Userame Field -->
                                 <div>
                                     <label class="block text-gray-700 font-medium mb-1" for="name">Userame:</label>
-                                    <p
-                                        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-200">
-                                        {{ form.username }}</p>
+                                    <input id="name" type="text" v-model="form.username" placeholder="Username"
+                                        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                         />
                                 </div>
 
                                 <!-- Name Field -->
@@ -168,7 +168,6 @@ export default defineComponent({
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    console.log(data)
                     originalHobbies.value = data.hobbies.map((hobby: { name: string; }) => hobby.name);
                 } else {
                     alert('Failed to get all hobbies');
@@ -193,7 +192,6 @@ export default defineComponent({
                 alert('Please select a hobby to add.');
                 return;
             }
-            console.log(selectedExistingHobby.value)
             const formData = new URLSearchParams();
             formData.append('hobby_name', selectedExistingHobby.value);
             try {
@@ -227,7 +225,6 @@ export default defineComponent({
 
         const addNewHobby = async () => {
             const hobby = newHobby.value.trim(); // Get the name of the new hobby
-            console.log(hobby)
 
             if (!hobby) {
                 alert('Please enter a hobby name.');
@@ -314,6 +311,7 @@ export default defineComponent({
                 let password = false
                 // Create a form-encoded payload
                 const formData = new URLSearchParams({
+                    username: form.value.username,
                     first_name: form.value.first_name,
                     last_name: form.value.last_name,
                     email: form.value.email,
@@ -381,11 +379,6 @@ export default defineComponent({
                 console.error('Error submitting profile:', error);
                 alert('An error occurred while updating the profile.');
             }
-
-            console.log('Profile data:', form.value);
-            setTimeout(() => {
-                closeModal()
-            }, 3000);
         };
 
         // // Logout functionality
