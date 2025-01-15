@@ -133,7 +133,7 @@
 
 <script lang="ts">
 import { useCSRFStore, useUserStore } from '../store';
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, computed, onMounted } from 'vue';
 export default defineComponent({
     name: 'Profile',
     setup() {
