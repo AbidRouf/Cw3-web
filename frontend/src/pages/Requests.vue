@@ -4,8 +4,10 @@
             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                 <h5 class="text-xl font-semibold" id="ModalLabel">See Requests</h5>
                 <button type="button" class="text-gray-400 hover:text-gray-600" aria-label="Close" @click="closeModal">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
@@ -15,8 +17,10 @@
                     <li v-for="request in friendRequests" :key="request.id" class="flex justify-between items-center">
                         <span>{{ request.from_username }} sent you a friend request on {{ request.sent_on }}</span>
                         <div class="space-x-2">
-                            <button @click="acceptFriendRequest(request.id)" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Accept</button>
-                            <button @click="declineFriendRequest(request.id)" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Decline</button>
+                            <button @click="acceptFriendRequest(request.id)"
+                                class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Accept</button>
+                            <button @click="declineFriendRequest(request.id)"
+                                class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Decline</button>
                         </div>
                     </li>
                 </ul>
@@ -26,10 +30,13 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineComponent } from 'vue';
+import { useCSRFStore } from '../store';
 
-export default {
+export default defineComponent({
+    name: 'FriendRequests',
     setup() {
+        const CSRFToken = useCSRFStore().csrfToken;
         const friendRequests = ref([]);
         const isModalVisible = ref(true);
 
@@ -40,7 +47,7 @@ export default {
         };
         const fetchFriendRequests = async () => {
             try {
-                const response = await fetch('/api/friend-requests/');
+                const response = await fetch('/friend-requests/');
                 if (!response.ok) throw new Error('Failed to fetch friend requests');
                 const data = await response.json();
                 friendRequests.value = data.friend_requests;
@@ -48,14 +55,53 @@ export default {
                 console.error('Error fetching friend requests:', error);
             }
         };
+        const declineFriendRequest = async (id) => {
+            try {
+                const formData = new FormData();
+                formData.append('to_user_id', id);
 
+                const response = await fetch(`/remove-friend-request/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': CSRFToken,
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to decline friend request');
+                }
+
+                friendRequests.value = friendRequests.value.filter(r => r.id !== id);
+            } catch (error) {
+                console.error('Error declining friend request:', error);
+            }
+        };
+        const acceptFriendRequest = async (id) => {
+            try {
+                const response = await fetch(`/accept-friend-request/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': CSRFToken,
+                    },
+                    body: JSON.stringify({ 'id': id }),
+                });
+                friendRequests.value = friendRequests.value.filter(r => r.id !== id);
+                if (!response.ok) throw new Error('Failed to decline friend request');
+                fetchFriendRequests();
+            } catch (error) {
+                console.error('Error declining friend request:', error);
+            }
+        }
         onMounted(fetchFriendRequests);
 
         return {
             friendRequests,
             closeModal,
             isModalVisible,
+            declineFriendRequest,
+            acceptFriendRequest,
         };
     }
-};
+});
 </script>

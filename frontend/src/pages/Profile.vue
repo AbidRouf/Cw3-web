@@ -381,26 +381,6 @@ export default defineComponent({
             }
         };
 
-        // // Logout functionality
-        // const logout = async () => {
-        //     try {
-        //         const response = await fetch('/logout/', {
-        //             method: 'POST',
-        //             headers: {
-        //                 'X-CSRFToken': CSRFToken,
-        //             },
-        //         });
-
-        //         if (response.ok) {
-        //             window.location.href = '/login/';
-        //         } else {
-        //             alert('Failed to log out. Please try again.');
-        //         }
-        //     } catch (error) {
-        //         console.error('Error during logout:', error);
-        //     }
-        // };
-
         return {
             form,
             availableHobbies,
@@ -410,7 +390,6 @@ export default defineComponent({
             addNewHobby,
             removeHobby,
             handleSubmit,
-            // logout,
             closeModal,
             isModalVisible,
             name,
@@ -418,7 +397,3 @@ export default defineComponent({
     },
 });
 </script>
-
-<style scoped>
-/* Additional styling if needed */
-</style>

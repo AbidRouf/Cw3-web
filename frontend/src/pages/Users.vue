@@ -85,7 +85,7 @@ export default defineComponent({
 
         const sendFriendRequest = async (toUserId: number) => {
             try {
-                const response = await fetch('/api/send-friend-request/', {
+                const response = await fetch('/send-friend-request/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
