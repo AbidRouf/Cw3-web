@@ -55,42 +55,11 @@ def send_friend_request(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
-# @login_required
-# @require_http_methods(["DELETE"])
-# def remove_hobby(request):
-#     # Extract hobby name from GET or DELETE body
-#     if request.method == "DELETE":
-#         try:
-#             body = json.loads(request.body)
-#             hobby_name = body.get('hobby')  # Use 'hobby' key in DELETE body
-#         except json.JSONDecodeError:
-#             return JsonResponse({'success': False, 'error': 'Invalid JSON payload.'}, status=400)
-
-#     if not hobby_name:
-#         return JsonResponse({'success': False, 'error': 'Hobby name is required.'}, status=400)
-
-#     try:
-#         # Find the hobby by name
-#         hobby = Hobby.objects.filter(name=hobby_name).first()
-#         if not hobby:
-#             return JsonResponse({'success': False, 'error': 'Hobby does not exist in the database.'}, status=404)
-
-#         # Check if the hobby is associated with the current user
-#         if not request.user.hobbies.filter(id=hobby.id).exists():
-#             return JsonResponse({'success': False, 'error': 'You do not have this hobby.'}, status=404)
-
-#         # Remove the hobby from the user's hobbies
-#         request.user.hobbies.remove(hobby)
-#         return JsonResponse({'success': True, 'message': f'Hobby "{hobby_name}" has been removed successfully.'}, status=200)
-#     except Exception as e:
-#         return JsonResponse({'success': False, 'error': f'An error occurred: {str(e)}'}, status=500)
-    
-
 @login_required
-@require_http_methods(["DELETE"])
-def remove_friend_request(request):
+@require_POST
+def accept_friend_request(request):
     try:
-        to_user_id = json.loads(request.body).get('id')
+        to_user_id = request.POST.get('to_user_id')
     except json.JSONDecodeError:
         return JsonResponse({'success': False, 'error': 'Invalid JSON payload.'}, status=400)
     if not to_user_id:
@@ -98,13 +67,40 @@ def remove_friend_request(request):
 
     try:
         to_user = User.objects.get(id=to_user_id)
-        # Check if a pending friend request already exists
-        if not FriendRequest.objects.filter(from_user=request.user, to_user=to_user, accepted=False).exists():
+        friend_request = FriendRequest.objects.filter(from_user=to_user, to_user=request.user, accepted=False).first()
+        if not friend_request:
+            return JsonResponse({'success': False, 'error': 'Friend request does not exist.'}, status=400)
+        friend_request.delete()
+        request.user.friends.add(to_user)
+        to_user.friends.add(request.user)
+
+        return JsonResponse({'success': True, 'message': 'Friend request accepted successfully.'}, status=200)
+
+    except User.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'User not found.'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+
+@login_required
+@require_POST
+def remove_friend_request(request):
+    try:
+        to_user_id = request.POST.get('to_user_id')
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON payload.'}, status=400)
+    if not to_user_id:
+        return JsonResponse({'success': False, 'error': 'User ID is required.'}, status=400)
+
+    try:
+        to_user = User.objects.get(id=to_user_id)
+        friend_request = FriendRequest.objects.filter(from_user=to_user, to_user=request.user, accepted=False).first()
+        if not friend_request:
             return JsonResponse({'success': False, 'error': 'Friend request does not exist.'}, status=400)
 
-        # No pending request found, create a new one
-        FriendRequest.objects.delete(from_user=request.user, to_user=to_user)
-        return JsonResponse({'success': True, 'message': 'Friend request declined successfully.'}, status=201)
+        friend_request.delete()
+        return JsonResponse({'success': True, 'message': 'Friend request declined successfully.'}, status=200)
 
     except User.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'User not found.'}, status=404)

@@ -42,8 +42,9 @@ urlpatterns = [
     path('profile/remove-hobby/', remove_hobby, name='remove_hobby'),
     path('users/', get_users, name='get_users'),
     path('users/similar-hobbies/', get_users_with_similar_hobbies, name='get_users_with_similar_hobbies'),
-    path('api/send-friend-request/', send_friend_request, name='send_friend_request'),
-    path('api/friend-requests/', list_friend_requests, name='list_friend_requests'),
+    path('send-friend-request/', send_friend_request, name='send_friend_request'),
+    path('friend-requests/', list_friend_requests, name='list_friend_requests'),
     path('remove-friend-request/', remove_friend_request, name='remove_friend_request'),
+    path('accept-friend-request/', accept_friend_request, name='accept_friend_request'),
 
 ]
