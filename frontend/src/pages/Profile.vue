@@ -26,7 +26,7 @@
                                     <label class="block text-gray-700 font-medium mb-1" for="name">userame:</label>
                                     <input id="name" type="text" v-model="form.username" placeholder="Your full name"
                                         class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                        required />
+                                         />
                                 </div>
 
                                 <!-- Name Field -->
@@ -34,7 +34,7 @@
                                     <label class="block text-gray-700 font-medium mb-1" for="name">Name:</label>
                                     <input id="name" type="text" v-model="name" placeholder="Your full name"
                                         class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                        required />
+                                         />
                                 </div>
 
                                 <!-- Email Field -->
@@ -42,7 +42,7 @@
                                     <label class="block text-gray-700 font-medium mb-1" for="email">Email:</label>
                                     <input id="email" type="email" v-model="form.email" placeholder="you@example.com"
                                         class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                        required />
+                                         />
                                 </div>
 
                                 <!-- Date of Birth Field -->
@@ -50,7 +50,7 @@
                                     <label class="block text-gray-700 font-medium mb-1" for="dob">Date of Birth:</label>
                                     <input id="dob" type="date" v-model="form.dob"
                                         class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                        required />
+                                         />
                                 </div>
 
                                 <!-- Password Fields -->
