@@ -23,7 +23,7 @@
                         </div>
                     </div>
                     <ul v-if="users.length > 0" class="space-y-4">
-                        <li v-for="user in users" :key="user.id" class="border border-gray-300 rounded p-4">
+                        <li v-for="user in users" :key="user.id" class="border border-gray-300 rounded p-4 flex justify-between">
                             {{ user.username }} - Hobbies: {{ user.hobbies.join(', ') }}
                             <button @click="sendFriendRequest(user.id)" class="ml-2 bg-blue-500 text-white rounded p-2">Send Friend Request</button>
 
