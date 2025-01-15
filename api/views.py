@@ -44,9 +44,11 @@ def send_friend_request(request):
 
     try:
         to_user = User.objects.get(id=to_user_id)
-        if FriendRequest.objects.filter(from_user=request.user, to_user=to_user, is_active=True).exists():
-            return JsonResponse({'success': False, 'error': 'Friend request already sent.'}, status=400)
+        # Check if a pending friend request already exists
+        if FriendRequest.objects.filter(from_user=request.user, to_user=to_user, accepted=False).exists():
+            return JsonResponse({'success': False, 'error': 'Friend request already sent and is still pending.'}, status=400)
 
+        # No pending request found, create a new one
         FriendRequest.objects.create(from_user=request.user, to_user=to_user)
         return JsonResponse({'success': True, 'message': 'Friend request sent successfully.'}, status=201)
 
@@ -54,6 +56,7 @@ def send_friend_request(request):
         return JsonResponse({'success': False, 'error': 'User not found.'}, status=404)
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
 
 def login_view(request: HttpRequest) -> HttpResponse:
     """
