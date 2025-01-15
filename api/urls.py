@@ -44,5 +44,6 @@ urlpatterns = [
     path('users/similar-hobbies/', get_users_with_similar_hobbies, name='get_users_with_similar_hobbies'),
     path('api/send-friend-request/', send_friend_request, name='send_friend_request'),
     path('api/friend-requests/', list_friend_requests, name='list_friend_requests'),
+    path('remove-friend-request/', remove_friend_request, name='remove_friend_request'),
 
 ]
