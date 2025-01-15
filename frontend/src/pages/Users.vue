@@ -57,7 +57,6 @@ export default defineComponent({
         const filters = ref({
             minAge: 0,
             maxAge: 300,
-            hobby: ''
         });
 
         // Function to fetch users from the backend
@@ -67,7 +66,6 @@ export default defineComponent({
                     page: page.value.toString(),
                     min_age: filters.value.minAge.toString(),
                     max_age: filters.value.maxAge.toString(),
-                    hobby: filters.value.hobby
                 }).toString();
 
                 const response = await fetch(`/users/similar-hobbies/?${params}`);
@@ -95,7 +93,6 @@ export default defineComponent({
 
         // Apply filters and reset pagination
         const applyFilters = () => {
-            users.value = [];
             page.value = 1;
             fetchUsers();
         };
