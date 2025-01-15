@@ -7,6 +7,9 @@ LEARN OUTS:
 2. Your project should include automated tests that test: (1) account creation / signup, (2) login and (3) editing all the user's data on their profile page, (4) users page, with testing of filtering by age, (5) sending a friend request, (6) login as the other user and accept the friend requests sent. You should use selenium-based tests for full end-to-end (E2E) testing.
 
 
+
+
+
 AT THE END:
 Outcome: Once fully tested, your application should be deployed to the EECS OpenShift platform (to be discussed in week 8) — one deployed app per team. Make sure your submitted application has at least 20 test users and at least 10 hobbies. Each group should submit the code including a README file which should contain:
 

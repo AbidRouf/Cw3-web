@@ -42,4 +42,6 @@ urlpatterns = [
     path('profile/remove-hobby/', remove_hobby, name='remove_hobby'),
     path('users/', get_users, name='get_users'),
     path('users/similar-hobbies/', get_users_with_similar_hobbies, name='get_users_with_similar_hobbies'),
+    path('api/send-friend-request/', send_friend_request, name='send_friend_request'),
+
 ]

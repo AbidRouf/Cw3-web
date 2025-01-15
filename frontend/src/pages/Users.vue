@@ -25,6 +25,8 @@
                     <ul v-if="users.length > 0" class="space-y-4">
                         <li v-for="user in users" :key="user.id" class="border border-gray-300 rounded p-4">
                             {{ user.username }} - Hobbies: {{ user.hobbies.join(', ') }}
+                            <button @click="sendFriendRequest(user.id)" class="ml-2 bg-blue-500 text-white rounded p-2">Send Friend Request</button>
+
                         </li>
                     </ul>
                     <p v-else>No users found.</p>
@@ -81,6 +83,35 @@ export default defineComponent({
             }
         };
 
+        const sendFriendRequest = async (toUserId: number) => {
+            try {
+                const response = await fetch('/api/send-friend-request/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: new URLSearchParams({ to_user_id: toUserId.toString() })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert(data.message);
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                console.error('Error sending friend request:', error);
+                alert('Failed to send friend request.');
+            }
+        };
+
+    const getCSRFToken = () => {
+        const csrfCookie = document.cookie.split(';').find(row => row.startsWith('csrftoken='));
+        if (csrfCookie) {
+            return csrfCookie.split('=')[1];
+        }
+        return '';
+    };
 
         // Call fetchUsers on component mount
         onMounted(fetchUsers);
@@ -111,7 +142,8 @@ export default defineComponent({
             users,
             hasNext,
             page,
-            filters
+            filters,
+            sendFriendRequest,
         };
     },
 });

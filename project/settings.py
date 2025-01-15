@@ -159,3 +159,6 @@ CSRF_TRUSTED_ORIGINS = [
 # Ensure session cookies are secure if using HTTPS
 SESSION_COOKIE_SECURE = True  # Set to True in production
 CSRF_COOKIE_SECURE = True     # Set to True in production
+
+
+AUTH_USER_MODEL = 'api.User'
