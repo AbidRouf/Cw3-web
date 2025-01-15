@@ -20,11 +20,6 @@
                                 <input type="number" v-model.number="filters.maxAge" @change="applyFilters"
                                     class="border border-gray-300 rounded p-2" />
                             </label>
-                            <label class="flex items-center space-x-2">
-                                <span>Hobby:</span>
-                                <input type="text" v-model="filters.hobby" @change="applyFilters"
-                                    class="border border-gray-300 rounded p-2" />
-                            </label>
                         </div>
                     </div>
                     <ul v-if="users.length > 0" class="space-y-4">
@@ -75,7 +70,7 @@ export default defineComponent({
                     hobby: filters.value.hobby
                 }).toString();
 
-                const response = await fetch(`/users/?${params}`);
+                const response = await fetch(`/users/similar-hobbies/?${params}`);
                 if (!response.ok) throw new Error('Failed to fetch users.');
 
                 const data = await response.json();
