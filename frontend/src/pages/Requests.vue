@@ -17,9 +17,9 @@
                     <li v-for="request in friendRequests" :key="request.id" class="flex justify-between items-center">
                         <span>{{ request.from_username }} sent you a friend request on {{ request.sent_on }}</span>
                         <div class="space-x-2">
-                            <button @click="acceptFriendRequest(request.id)"
+                            <button @click="acceptFriendRequest(request)"
                                 class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Accept</button>
-                            <button @click="declineFriendRequest(request.id)"
+                            <button @click="declineFriendRequest(request)"
                                 class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Decline</button>
                         </div>
                     </li>
@@ -55,10 +55,10 @@ export default defineComponent({
                 console.error('Error fetching friend requests:', error);
             }
         };
-        const declineFriendRequest = async (id) => {
+        const declineFriendRequest = async (request) => {
             try {
                 const formData = new FormData();
-                formData.append('to_user_id', id);
+                formData.append('to_user_id', request.from_user_id);
 
                 const response = await fetch(`/remove-friend-request/`, {
                     method: 'POST',
@@ -72,27 +72,33 @@ export default defineComponent({
                     throw new Error('Failed to decline friend request');
                 }
 
-                friendRequests.value = friendRequests.value.filter(r => r.id !== id);
+                friendRequests.value = friendRequests.value.filter(r => r.id !== request.id);
             } catch (error) {
                 console.error('Error declining friend request:', error);
             }
         };
         const acceptFriendRequest = async (id) => {
             try {
+                const formData = new FormData();
+                formData.append('to_user_id', request.from_user_id);
+
                 const response = await fetch(`/accept-friend-request/`, {
-                    method: 'DELETE',
+                    method: 'POST',
                     headers: {
                         'X-CSRFToken': CSRFToken,
                     },
-                    body: JSON.stringify({ 'id': id }),
+                    body: formData,
                 });
-                friendRequests.value = friendRequests.value.filter(r => r.id !== id);
-                if (!response.ok) throw new Error('Failed to decline friend request');
-                fetchFriendRequests();
+
+                if (!response.ok) {
+                    throw new Error('Failed to accept friend request');
+                }
+
+                friendRequests.value = friendRequests.value.filter(r => r.id !== request.id);
             } catch (error) {
                 console.error('Error declining friend request:', error);
             }
-        }
+        };
         onMounted(fetchFriendRequests);
 
         return {
