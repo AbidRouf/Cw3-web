@@ -286,7 +286,7 @@ def update_profile(request: HttpRequest) -> JsonResponse:
             request.user.dob = datetime.strptime(dob, '%Y-%m-%d').date()
         if username:
             if request.user.username != username and User.objects.filter(username=username).exists():
-                return JsonResponse({'success': False, 'error': 'Username is already taken.'}, status=200)
+                return JsonResponse({'success': False, 'error': 'Username is already taken.'}, status=400)
             request.user.username = username
         request.user.save()
         return JsonResponse({'success': True, 'message': 'Profile updated successfully.'}, status=200)
