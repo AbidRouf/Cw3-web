@@ -164,7 +164,8 @@ export default defineComponent({
                 form.value.first_name = firstName || '';
                 form.value.last_name = lastName.join(' ') || '';
             },
-        }); const isModalVisible = ref(true)
+        });
+        const isModalVisible = ref(true)
         if (userStore.user) {
             form.value = { ...userStore.user, password: '' }; // Assign Pinia user data to form
         }
@@ -176,7 +177,7 @@ export default defineComponent({
 
 
         const originalHobbies = ref<Hobby[]>([]); // List of common hobbies
-        const getAllHobbies = async () => {
+        const getAllHobbies = async (): Promise<void> => {
             try {
                 const response = await fetch('/hobbies/', {
                     method: 'GET',
@@ -202,8 +203,7 @@ export default defineComponent({
         const selectedExistingHobby = ref<Hobby>({ id: -1, name: '' });
         const newHobby = ref('');
 
-
-        const addExistingHobby = async () => {
+        const addExistingHobby = async (): Promise<void> => {
             if (!selectedExistingHobby.value || selectedExistingHobby.value.id === -1) {
                 alert('Please select a hobby to add.');
                 return;
@@ -239,7 +239,7 @@ export default defineComponent({
         };
 
 
-        const addNewHobby = async () => {
+        const addNewHobby = async (): Promise<void> => {
             const hobby = newHobby.value.trim(); // Get the name of the new hobby
 
             if (!hobby) {
@@ -280,7 +280,7 @@ export default defineComponent({
             }
         };
 
-        const removeHobby = async (index: number) => {
+        const removeHobby = async (index: number): Promise<void> => {
             const hobbyToRemove = form.value.hobbies[index].name; // Get the hobby name by index
 
             if (!hobbyToRemove) {
@@ -317,7 +317,7 @@ export default defineComponent({
         };
 
 
-        const handleSubmit = async () => {
+        const handleSubmit = async (): Promise<void> => {
             if (form.value.password !== confirmPassword.value) {
                 alert('Passwords do not match.');
                 return;
