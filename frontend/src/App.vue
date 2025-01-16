@@ -24,6 +24,12 @@
                         See Requests
                     </button>
                 </router-link>
+                <router-link v-if="isAuthenticated" to="/showfriends/">
+                    <button
+                        class="w-48 min-w-16 bg-gradient-to-r from-blue-500 to-gray-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-gray-600 hover:to-gray-600 transition-all duration-300">
+                        Show Friends
+                    </button>
+                </router-link>
             </div>
 
             <!-- Conditional Login/Logout Links -->

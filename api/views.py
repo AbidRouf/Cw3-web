@@ -487,3 +487,16 @@ def get_users_with_similar_hobbies(request):
         for user in page
     ]
     return JsonResponse({"users": user_data, "has_next": page.has_next()}, status=200)
+
+
+@login_required
+def show_friends(request):
+    try:
+        friends = request.user.friends.all()  # Assuming you have a 'friends' relation
+        friends_data = [
+            {"id": friend.id, "username": friend.username, "email": friend.email}
+            for friend in friends
+        ]
+        return JsonResponse({"success": True, "friends": friends_data}, status=200)
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
