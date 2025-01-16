@@ -27,7 +27,8 @@
                             class="border border-gray-300 rounded p-4 flex justify-between">
                             {{ user.username }} - Hobbies: {{ user.hobbies.join(', ') }}
                             <button @click="sendFriendRequest(user.id)"
-                                class="ml-2 bg-green-500 text-white rounded h-12 p-2 flex-shrink-0">Send Friend Request</button>
+                                class="ml-2 bg-green-500 text-white rounded h-12 p-2 flex-shrink-0">Send Friend
+                                Request</button>
 
                         </li>
                     </ul>
