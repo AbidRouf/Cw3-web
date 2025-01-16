@@ -17,7 +17,6 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 from django.http import HttpResponse
-
 from .views import *
 
 
@@ -42,6 +41,6 @@ urlpatterns = [
     path('friend-requests/', list_friend_requests, name='list_friend_requests'),
     path('remove-friend-request/', remove_friend_request, name='remove_friend_request'),
     path('accept-friend-request/', accept_friend_request, name='accept_friend_request'),
-    path('api/friends/', show_friends, name='show_friends'),
+    path('friends/', show_friends, name='show_friends'),
     
 ]

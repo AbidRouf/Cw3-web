@@ -10,10 +10,8 @@
 <body>
     <h1>Logout</h1>
 
-    <!-- Logout message -->
     <p>You have successfully logged out.</p>
 
-    <!-- Redirect to login page -->
     <form method="POST" action="/logout/">
         {% csrf_token %}
         <button type="submit">Go to Login Page</button>

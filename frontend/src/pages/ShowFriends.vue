@@ -42,7 +42,7 @@ export default defineComponent({
 
         const fetchFriends = async (): Promise<void> => {
             try {
-                const response = await fetch('/api/friends/');
+                const response = await fetch('/friends/');
                 if (!response.ok) throw new Error('Failed to fetch friends');
                 const data = await response.json();
                 if (data.success) {
