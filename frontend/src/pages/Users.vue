@@ -44,6 +44,8 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
+import { useCSRFStore } from '../store';
+
 interface Hobby {
     id: number;
     name: string;
@@ -58,6 +60,7 @@ interface User {
 export default defineComponent({
     name: 'OtherUsers',
     setup() {
+        const CSRFToken = useCSRFStore().csrfToken;
         const isModalVisible = ref(true);
         const users = ref<User[]>([]);
         const hasNext = ref(false);
@@ -94,7 +97,7 @@ export default defineComponent({
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-CSRFToken': getCSRFToken()
+                        'X-CSRFToken': CSRFToken
                     },
                     body: new URLSearchParams({ to_user_id: toUserId.toString() })
                 });
@@ -108,14 +111,6 @@ export default defineComponent({
                 console.error('Error sending friend request:', error);
                 alert('Failed to send friend request.');
             }
-        };
-
-        const getCSRFToken = () => {
-            const csrfCookie = document.cookie.split(';').find(row => row.startsWith('csrftoken='));
-            if (csrfCookie) {
-                return csrfCookie.split('=')[1];
-            }
-            return '';
         };
 
         // Call fetchUsers on component mount
