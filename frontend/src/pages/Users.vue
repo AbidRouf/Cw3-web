@@ -41,11 +41,14 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
-
+interface Hobby{
+    id: number;
+    name: string;
+}
 interface User {
     id: number;
     username: string;
-    hobbies: string[];
+    hobbies: Hobby[];
     dob: Date;
 }
 
@@ -74,7 +77,6 @@ export default defineComponent({
                 if (!response.ok) throw new Error('Failed to fetch users.');
 
                 const data = await response.json();
-                console.log("API Response:", data);  // Check what you receive from the API
                 users.value = data.users;
                 hasNext.value = data.has_next;
             } catch (error) {

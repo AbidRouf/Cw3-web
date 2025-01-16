@@ -137,7 +137,6 @@ export default defineComponent({
             dob: Date;
             password: string;
             hobbies: Hobby[];
-            friends: User[];
         }
         interface Hobby {
             id: number,
@@ -154,7 +153,6 @@ export default defineComponent({
             dob: new Date(),
             password: '',
             hobbies: [] as Hobby[],
-            friends: [] as User[],
         })
         const confirmPassword = ref('')
 

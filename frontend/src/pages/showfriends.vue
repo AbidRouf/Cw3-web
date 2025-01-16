@@ -11,7 +11,7 @@
                     <ul v-if="friends.length > 0" class="space-y-4">
                         <li v-for="friend in friends" :key="friend.id"
                             class="border border-gray-300 rounded p-4 flex justify-between">
-                            {{ friend.username }} - {{ friend.email }}
+                            {{ friend.username }} - Hobbies: {{ friend.hobbies.join(', ') }}
                         </li>
                     </ul>
                     <p v-else>No friends found.</p>
@@ -23,18 +23,22 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
-
-interface Friend {
+interface Hobby {
+    id: number;
+    name: string;
+}
+interface User {
     id: number;
     username: string;
     email: string;
+    hobbies: Hobby[]
 }
 
 export default defineComponent({
     name: 'ShowFriends',
     setup() {
         const isModalVisible = ref(true);
-        const friends = ref<Friend[]>([]);
+        const friends = ref<User[]>([]);
 
         const fetchFriends = async () => {
             try {

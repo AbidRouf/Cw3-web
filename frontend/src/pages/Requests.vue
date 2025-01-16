@@ -15,8 +15,8 @@
                 <h3 class="text-lg font-medium mb-4">Pending Friend Requests</h3>
                 <ul class="space-y-4">
                     <li v-for="request in friendRequests" :key="request.id" class="flex justify-between items-center">
-                        <span>{{ request.from_username }} sent you a friend request on {{ request.sent_on }}</span>
-                        <div class="space-x-2">
+                        <span>{{ request.from_username }} (has hobbies: {{ request.hobbies.join(', ') }}) sent you a friend request on {{ request.sent_on }}</span>
+                        <div class="space-y-2">
                             <button @click="acceptFriendRequest(request)"
                                 class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Accept</button>
                             <button @click="declineFriendRequest(request)"
@@ -29,15 +29,26 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ref, onMounted, defineComponent } from 'vue';
 import { useCSRFStore } from '../store';
-
+interface Hobby{
+        id: number;
+        name: string;
+    }
+interface Request{
+    from_user_id: string;
+    id: any;
+    hobbies: Hobby[];
+    from_username: string;
+    sent_on: string;
+}    
 export default defineComponent({
+    
     name: 'FriendRequests',
     setup() {
         const CSRFToken = useCSRFStore().csrfToken;
-        const friendRequests = ref([]);
+        const friendRequests = ref<Request[]>([]);
         const isModalVisible = ref(true);
 
         // Close the modal and navigate away
@@ -55,7 +66,7 @@ export default defineComponent({
                 console.error('Error fetching friend requests:', error);
             }
         };
-        const declineFriendRequest = async (request) => {
+        const declineFriendRequest = async (request: Request) => {
             try {
                 const formData = new FormData();
                 formData.append('to_user_id', request.from_user_id);
@@ -77,7 +88,7 @@ export default defineComponent({
                 console.error('Error declining friend request:', error);
             }
         };
-        const acceptFriendRequest = async (request) => {
+        const acceptFriendRequest = async (request: Request) => {
     try {
         const formData = new FormData();
         formData.append('to_user_id', request.from_user_id);

@@ -25,7 +25,8 @@ def list_friend_requests(request):
                 "id": fr.id,
                 "from_user_id": fr.from_user.id,
                 "from_username": fr.from_user.username,
-                "sent_on": fr.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+                "sent_on": fr.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                "hobbies": list(fr.from_user.hobbies.values_list("name", flat=True))
             }
             for fr in friend_requests
         ]
@@ -494,7 +495,7 @@ def show_friends(request):
     try:
         friends = request.user.friends.all()  # Assuming you have a 'friends' relation
         friends_data = [
-            {"id": friend.id, "username": friend.username, "email": friend.email}
+            {"id": friend.id, "username": friend.username, "email": friend.email, "hobbies": list(friend.hobbies.values_list("name", flat=True))}
             for friend in friends
         ]
         return JsonResponse({"success": True, "friends": friends_data}, status=200)
