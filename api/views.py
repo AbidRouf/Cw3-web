@@ -4,7 +4,6 @@ from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods, require_POST
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.contrib.auth.forms import PasswordChangeForm
 from django.db.models import Count, Q
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from datetime import datetime, date, timedelta
