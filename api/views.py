@@ -54,25 +54,31 @@ def send_friend_request(request):
         return JsonResponse({'success': False, 'error': 'User not found.'}, status=404)
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
-
 @login_required
 @require_POST
 def accept_friend_request(request):
     try:
         to_user_id = request.POST.get('to_user_id')
-    except json.JSONDecodeError:
-        return JsonResponse({'success': False, 'error': 'Invalid JSON payload.'}, status=400)
-    if not to_user_id:
-        return JsonResponse({'success': False, 'error': 'User ID is required.'}, status=400)
+        if not to_user_id:
+            return JsonResponse({'success': False, 'error': 'User ID is required.'}, status=400)
 
-    try:
-        to_user = User.objects.get(id=to_user_id)
-        friend_request = FriendRequest.objects.filter(from_user=to_user, to_user=request.user, accepted=False).first()
+        # Check if the friend request exists
+        friend_request = FriendRequest.objects.filter(
+            from_user_id=to_user_id,
+            to_user=request.user,
+            accepted=False
+        ).first()
+
         if not friend_request:
-            return JsonResponse({'success': False, 'error': 'Friend request does not exist.'}, status=400)
-        friend_request.delete()
-        request.user.friends.add(to_user)
-        to_user.friends.add(request.user)
+            return JsonResponse({'success': False, 'error': 'Friend request does not exist or already accepted.'}, status=404)
+
+        # Accept the friend request
+        friend_request.accepted = True
+        friend_request.save()
+
+        # Add users to each other's friends list
+        request.user.friends.add(friend_request.from_user)
+        friend_request.from_user.friends.add(request.user)
 
         return JsonResponse({'success': True, 'message': 'Friend request accepted successfully.'}, status=200)
 
@@ -80,7 +86,6 @@ def accept_friend_request(request):
         return JsonResponse({'success': False, 'error': 'User not found.'}, status=404)
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
-
 
 
 @login_required
@@ -412,7 +417,7 @@ def get_users(request):
 @login_required
 @require_http_methods(["DELETE"])
 def remove_hobby(request):
-    # Extract hobby name from GET or DELETE body
+    """THIS FUNCTION is for removing the bobby from the hobby list and updating the page with the updated hobby list"""
     if request.method == "DELETE":
         try:
             body = json.loads(request.body)
@@ -443,7 +448,7 @@ def remove_hobby(request):
 @login_required
 def get_users_with_similar_hobbies(request):
     """
-    Retrieve a paginated list of users with the most similar hobbies, filtered by age range.
+    Retrieves a paginated list of users with the most similar hobbies, filtered by age range
     """
     current_user = request.user
 

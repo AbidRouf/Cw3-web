@@ -77,27 +77,32 @@ export default defineComponent({
                 console.error('Error declining friend request:', error);
             }
         };
-        const acceptFriendRequest = async (id) => {
-            try {
-                const formData = new FormData();
-                formData.append('to_user_id', request.from_user_id);
+        const acceptFriendRequest = async (request) => {
+    try {
+        const formData = new FormData();
+        formData.append('to_user_id', request.from_user_id);
 
-                const response = await fetch(`/accept-friend-request/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': CSRFToken,
-                    },
-                    body: formData,
-                });
+        const response = await fetch(`/accept-friend-request/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': CSRFToken,
+            },
+            body: formData,
+        });
 
-                if (!response.ok) {
-                    throw new Error('Failed to accept friend request');
-                }
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error from backend:", errorData);
+            throw new Error(errorData.error || 'Failed to accept friend request');
+        }
 
-                friendRequests.value = friendRequests.value.filter(r => r.id !== request.id);
-            } catch (error) {
-                console.error('Error accepting friend request:', error);
-            }
+        // Remove the accepted request from the list
+        friendRequests.value = friendRequests.value.filter(r => r.id !== request.id);
+        alert('Friend request accepted successfully.');
+    } catch (error) {
+        console.error('Error accepting friend request:', error);
+        alert('Failed to accept friend request. Please try again.');
+    }
         };
         onMounted(fetchFriendRequests);
 
