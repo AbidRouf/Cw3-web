@@ -57,7 +57,7 @@ export default defineComponent({
             isModalVisible.value = false;
             window.location.href = "/";
         };
-        const fetchFriendRequests = async () => {
+        const fetchFriendRequests = async (): Promise<void> => {
             try {
                 const response = await fetch('/friend-requests/');
                 if (!response.ok) throw new Error('Failed to fetch friend requests');
@@ -67,7 +67,7 @@ export default defineComponent({
                 console.error('Error fetching friend requests:', error);
             }
         };
-        const declineFriendRequest = async (request: Request) => {
+        const declineFriendRequest = async (request: Request): Promise<void>=> {
             try {
                 const formData = new FormData();
                 formData.append('to_user_id', request.from_user_id);
@@ -89,7 +89,7 @@ export default defineComponent({
                 console.error('Error declining friend request:', error);
             }
         };
-        const acceptFriendRequest = async (request: Request) => {
+        const acceptFriendRequest = async (request: Request): Promise<void> => {
             try {
                 const formData = new FormData();
                 formData.append('to_user_id', request.from_user_id);
