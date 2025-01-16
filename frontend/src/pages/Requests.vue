@@ -15,7 +15,8 @@
                 <h3 class="text-lg font-medium mb-4">Pending Friend Requests</h3>
                 <ul class="space-y-4">
                     <li v-for="request in friendRequests" :key="request.id" class="flex justify-between items-center">
-                        <span>{{ request.from_username }} (has hobbies: {{ request.hobbies.join(', ') }}) sent you a friend request on {{ request.sent_on }}</span>
+                        <span>{{ request.from_username }} (has hobbies: {{ request.hobbies.join(', ') }}) sent you a
+                            friend request on {{ request.sent_on }}</span>
                         <div class="space-y-2">
                             <button @click="acceptFriendRequest(request)"
                                 class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Accept</button>
@@ -32,23 +33,23 @@
 <script lang="ts">
 import { ref, onMounted, defineComponent } from 'vue';
 import { useCSRFStore } from '../store';
-interface Hobby{
-        id: number;
-        name: string;
-    }
-interface Request{
+interface Hobby {
+    id: number;
+    name: string;
+}
+interface Request {
     from_user_id: string;
     id: any;
     hobbies: Hobby[];
     from_username: string;
     sent_on: string;
-}    
+}
 export default defineComponent({
-    
+
     name: 'FriendRequests',
     setup() {
         const CSRFToken = useCSRFStore().csrfToken;
-        const friendRequests = ref<Request[]>([]);
+        const friendRequests = ref < Request[] > ([]);
         const isModalVisible = ref(true);
 
         // Close the modal and navigate away
@@ -89,31 +90,31 @@ export default defineComponent({
             }
         };
         const acceptFriendRequest = async (request: Request) => {
-    try {
-        const formData = new FormData();
-        formData.append('to_user_id', request.from_user_id);
+            try {
+                const formData = new FormData();
+                formData.append('to_user_id', request.from_user_id);
 
-        const response = await fetch(`/accept-friend-request/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': CSRFToken,
-            },
-            body: formData,
-        });
+                const response = await fetch(`/accept-friend-request/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': CSRFToken,
+                    },
+                    body: formData,
+                });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error("Error from backend:", errorData);
-            throw new Error(errorData.error || 'Failed to accept friend request');
-        }
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Error from backend:", errorData);
+                    throw new Error(errorData.error || 'Failed to accept friend request');
+                }
 
-        // Remove the accepted request from the list
-        friendRequests.value = friendRequests.value.filter(r => r.id !== request.id);
-        alert('Friend request accepted successfully.');
-    } catch (error) {
-        console.error('Error accepting friend request:', error);
-        alert('Failed to accept friend request. Please try again.');
-    }
+                // Remove the accepted request from the list
+                friendRequests.value = friendRequests.value.filter(r => r.id !== request.id);
+                alert('Friend request accepted successfully.');
+            } catch (error) {
+                console.error('Error accepting friend request:', error);
+                alert('Failed to accept friend request. Please try again.');
+            }
         };
         onMounted(fetchFriendRequests);
 

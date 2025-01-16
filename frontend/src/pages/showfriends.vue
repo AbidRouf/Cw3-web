@@ -77,12 +77,16 @@ export default defineComponent({
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 32rem; /* Minimum height of 32rem */
-    background-color: rgba(0, 0, 0, 0.5); /* Optional: dim background */
+    min-height: 32rem;
+    /* Minimum height of 32rem */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Optional: dim background */
 }
 
 .modal-content {
-    max-height: 90vh; /* Ensures the modal doesn't exceed viewport height */
-    overflow-y: auto; /* Adds scroll for overflowing content */
+    max-height: 90vh;
+    /* Ensures the modal doesn't exceed viewport height */
+    overflow-y: auto;
+    /* Adds scroll for overflowing content */
 }
 </style>

@@ -23,9 +23,11 @@
                         </div>
                     </div>
                     <ul v-if="users.length > 0" class="space-y-4">
-                        <li v-for="user in users" :key="user.id" class="border border-gray-300 rounded p-4 flex justify-between">
+                        <li v-for="user in users" :key="user.id"
+                            class="border border-gray-300 rounded p-4 flex justify-between">
                             {{ user.username }} - Hobbies: {{ user.hobbies.join(', ') }}
-                            <button @click="sendFriendRequest(user.id)" class="ml-2 bg-blue-500 text-white rounded p-2">Send Friend Request</button>
+                            <button @click="sendFriendRequest(user.id)"
+                                class="ml-2 bg-blue-500 text-white rounded p-2">Send Friend Request</button>
 
                         </li>
                     </ul>
@@ -41,7 +43,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
-interface Hobby{
+interface Hobby {
     id: number;
     name: string;
 }
@@ -107,13 +109,13 @@ export default defineComponent({
             }
         };
 
-    const getCSRFToken = () => {
-        const csrfCookie = document.cookie.split(';').find(row => row.startsWith('csrftoken='));
-        if (csrfCookie) {
-            return csrfCookie.split('=')[1];
-        }
-        return '';
-    };
+        const getCSRFToken = () => {
+            const csrfCookie = document.cookie.split(';').find(row => row.startsWith('csrftoken='));
+            if (csrfCookie) {
+                return csrfCookie.split('=')[1];
+            }
+            return '';
+        };
 
         // Call fetchUsers on component mount
         onMounted(fetchUsers);
@@ -156,12 +158,16 @@ export default defineComponent({
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 32rem; /* Minimum height of 32rem */
-    background-color: rgba(0, 0, 0, 0.5); /* Optional: dim background */
+    min-height: 32rem;
+    /* Minimum height of 32rem */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Optional: dim background */
 }
 
 .modal-content {
-    max-height: 90vh; /* Ensures the modal doesn't exceed viewport height */
-    overflow-y: auto; /* Adds scroll for overflowing content */
+    max-height: 90vh;
+    /* Ensures the modal doesn't exceed viewport height */
+    overflow-y: auto;
+    /* Adds scroll for overflowing content */
 }
 </style>
