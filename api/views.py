@@ -5,19 +5,18 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods, require_POST
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.forms import PasswordChangeForm
-from .models import Hobby
-from collections import Counter
-from django.db.models import  Count, Q
+from django.db.models import Count, Q
 from django.http import HttpRequest, HttpResponse, JsonResponse
-from datetime import datetime,date , timedelta
+from datetime import datetime, date, timedelta
 import json
 from django.core.paginator import Paginator
-from .models import Hobby, FriendRequest  # Assuming FriendRequest is defined in the same models.py file as Hobby
+from .models import Hobby, FriendRequest
+
+User = get_user_model()
 
 @login_required
-def list_friend_requests(request):
+def list_friend_requests(request: HttpRequest) -> JsonResponse:
     if request.method == "GET":
-        # Fetch all pending friend requests to the current user
         friend_requests = FriendRequest.objects.filter(to_user=request.user, accepted=False)
         
         requests_data = [
@@ -33,21 +32,18 @@ def list_friend_requests(request):
         
         return JsonResponse({"friend_requests": requests_data}, safe=False, status=200)
 
-
 @login_required
 @require_POST
-def send_friend_request(request):
+def send_friend_request(request: HttpRequest) -> JsonResponse:
     to_user_id = request.POST.get('to_user_id')
     if not to_user_id:
         return JsonResponse({'success': False, 'error': 'User ID is required.'}, status=400)
 
     try:
         to_user = User.objects.get(id=to_user_id)
-        # Check if a pending friend request already exists
         if FriendRequest.objects.filter(from_user=request.user, to_user=to_user, accepted=False).exists():
             return JsonResponse({'success': False, 'error': 'Friend request already sent and is still pending.'}, status=400)
 
-        # No pending request found, create a new one
         FriendRequest.objects.create(from_user=request.user, to_user=to_user)
         return JsonResponse({'success': True, 'message': 'Friend request sent successfully.'}, status=201)
 
@@ -55,15 +51,15 @@ def send_friend_request(request):
         return JsonResponse({'success': False, 'error': 'User not found.'}, status=404)
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
 @login_required
 @require_POST
-def accept_friend_request(request):
+def accept_friend_request(request: HttpRequest) -> JsonResponse:
     try:
         to_user_id = request.POST.get('to_user_id')
         if not to_user_id:
             return JsonResponse({'success': False, 'error': 'User ID is required.'}, status=400)
 
-        # Check if the friend request exists
         friend_request = FriendRequest.objects.filter(
             from_user_id=to_user_id,
             to_user=request.user,
@@ -73,11 +69,9 @@ def accept_friend_request(request):
         if not friend_request:
             return JsonResponse({'success': False, 'error': 'Friend request does not exist or already accepted.'}, status=404)
 
-        # Accept the friend request
         friend_request.accepted = True
         friend_request.save()
 
-        # Add users to each other's friends list
         request.user.friends.add(friend_request.from_user)
         friend_request.from_user.friends.add(request.user)
 
@@ -87,15 +81,15 @@ def accept_friend_request(request):
         return JsonResponse({'success': False, 'error': 'User not found.'}, status=404)
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
-
-
+        
 @login_required
 @require_POST
-def remove_friend_request(request):
+def remove_friend_request(request: HttpRequest) -> JsonResponse:
     try:
         to_user_id = request.POST.get('to_user_id')
     except json.JSONDecodeError:
         return JsonResponse({'success': False, 'error': 'Invalid JSON payload.'}, status=400)
+
     if not to_user_id:
         return JsonResponse({'success': False, 'error': 'User ID is required.'}, status=400)
 
@@ -112,7 +106,6 @@ def remove_friend_request(request):
         return JsonResponse({'success': False, 'error': 'User not found.'}, status=404)
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
-
 
 def login_view(request: HttpRequest) -> HttpResponse:
     """
@@ -132,42 +125,39 @@ def login_view(request: HttpRequest) -> HttpResponse:
             return render(request, 'api/login.html', {'error': 'Invalid credentials.'})
     else:  
         return render(request, 'api/login.html')
-
-def signup_view(request):
+        
+def signup_view(request: HttpRequest) -> HttpResponse:
     """This handle the user registration, then validates input befre creating a new user then redirecting the user to 'login' on success or will display a corresponding error depended on failiure """
     if request.method == 'GET':
         return render(request, 'api/signup.html')
-    
+
     username = request.POST['username']
     email = request.POST['email']
     password = request.POST['password']
     password2 = request.POST['password2']
     dob = request.POST['dob']
-
+    
     if password != password2:
         messages.error(request, "Password don't match")
         return redirect('signup')
     
-    User = get_user_model()
-
     if User.objects.filter(username=username).exists():
         messages.error(request, 'That username is taken')
         return redirect('signup')
-    
+
     if User.objects.filter(email=email).exists():
         messages.error(request, 'That email is taken')
         return redirect('signup')
-    
+
     if not dob:
         messages.error(request, "Please enter date of birth")
         return redirect('signup')
-    
+
     try:
         user_dob = datetime.strptime(dob, '%Y-%m-%d').date()
     except ValueError:
         messages.error(request, "Invalid dob")
 
-    
     user = User.objects.create_user(
         username=username,
         email=email,
@@ -177,8 +167,8 @@ def signup_view(request):
     user.save()
     messages.success(request, "You have successfully registered")
     return redirect('login')
-    
-def auth_status(request):
+
+def auth_status(request: HttpRequest) -> JsonResponse:
     if request.user.is_authenticated:
         hobbies = list(request.user.hobbies.values_list('name', flat=True))
         user_data = {
@@ -189,7 +179,7 @@ def auth_status(request):
                 'email': request.user.email,
                 'first_name': request.user.first_name,
                 'last_name': request.user.last_name,
-                'dob': request.user.dob,  
+                'dob': request.user.dob,
                 'hobbies': hobbies,
             }
         }
@@ -200,10 +190,9 @@ def auth_status(request):
         }
     return JsonResponse(user_data)
 
-
 @login_required
 @require_http_methods(["GET"])
-def profile_view(request):
+def profile_view(request: HttpRequest) -> JsonResponse:
     try:
         hobbies = list(request.user.hobbies.values())
         user_data = {
@@ -212,17 +201,16 @@ def profile_view(request):
             'email': request.user.email,
             'first_name': request.user.first_name,
             'last_name': request.user.last_name,
-            'dob': request.user.dob,  
+            'dob': request.user.dob,
             'hobbies': hobbies,
         }
         return JsonResponse({'success': True, 'user': user_data}, status=200)
     except Exception as e:
         return JsonResponse({'success': False, 'error': 'Failed to retrieve profile information.'}, status=500)
 
-
 @login_required
 @require_POST
-def change_user_password(request):
+def change_user_password(request: HttpRequest) -> JsonResponse:
     new_password = request.POST.get('new_password')
     confirm_password = request.POST.get('confirm_password')
 
@@ -237,9 +225,8 @@ def change_user_password(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': 'Failed to update password.'}, status=500)
 
-
 @ensure_csrf_cookie
-def get_csrf_token(request):
+def get_csrf_token(request: HttpRequest) -> JsonResponse:
     return JsonResponse({'detail': 'CSRF cookie set'})
 
 def main_spa(request: HttpRequest) -> HttpResponse:
@@ -258,31 +245,29 @@ def logout_view(request: HttpRequest) -> JsonResponse:
         return JsonResponse({'message': 'Logged out successfully'}, status=200)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
-
 @login_required
 @require_POST
-def create_new_hobby(request):
+def create_new_hobby(request: HttpRequest) -> JsonResponse:
     """
     This function creates a new hobby and then is used for adding it to the users hobbies,last section will return a successfull or error response
     """
     hobby_name = request.POST.get('hobby')
     if not hobby_name:
         return JsonResponse({'success': False, 'error': 'Hobby name is required.'}, status=400)
-    
+
     try:
         hobby = Hobby.objects.filter(name=hobby_name).first()
         if not hobby:
-           hobby = Hobby(name=hobby_name)
-           hobby.save()
+            hobby = Hobby(name=hobby_name)
+            hobby.save()
         request.user.hobbies.add(hobby)
         return JsonResponse({'success': True, 'message': 'Hobby added successfully.'}, status=200)
     except Exception as e:
-        print(f"Error adding hobby: {e}")
-        return JsonResponse({'success': False, 'error': 'An error  while adding the hobby.'}, status=500)
-    
+        return JsonResponse({'success': False, 'error': 'An error while adding the hobby.'}, status=500)
+
 @login_required
 @require_POST
-def update_profile(request):
+def update_profile(request: HttpRequest) -> JsonResponse:
     """
     For updating users profile details,then will return a succesfull response if all is added correctly or an error response if not added in intended way
     """
@@ -291,7 +276,7 @@ def update_profile(request):
     email = request.POST.get('email')
     dob = request.POST.get('dob')
     username = request.POST.get('username')
-    try:            
+    try:
         if first_name:
             request.user.first_name = first_name
         if last_name:
@@ -300,25 +285,23 @@ def update_profile(request):
             request.user.email = email
         if dob:
             request.user.dob = datetime.strptime(dob, '%Y-%m-%d').date()
-        request.user.save()
         if username:
-            # Check if the new username is already taken by another user
             if request.user.username != username and User.objects.filter(username=username).exists():
                 return JsonResponse({'success': False, 'error': 'Username is already taken.'}, status=200)
-            request.user.username = username  # Update the username if it passes validation
+            request.user.username = username
         request.user.save()
         return JsonResponse({'success': True, 'message': 'Profile updated successfully.'}, status=200)
     except Exception as e:
         return JsonResponse({'success': False, 'error': 'Failed to update profile.'}, status=500)
 
-def get_all_hobbies(request):
+def get_all_hobbies(request: HttpRequest) -> JsonResponse:
     """
     fetches all hobbies all from the database,and will return a json response as seen on the last line
     """
     hobbies = list(Hobby.objects.values('id', 'name'))
     return JsonResponse({'success': True, 'hobbies': hobbies}, status=200)
 
-def add_hobby(request):
+def add_hobby(request: HttpRequest) -> JsonResponse:
     """
     Adds an existing hobby that is already on the site the other users actual hobbies,then returns a success or error JSON response.
     """
@@ -340,26 +323,7 @@ def add_hobby(request):
             return JsonResponse({'success': False, 'error': 'Failed to add hobby.'}, status=500)
 
 @login_required
-@require_POST
-def add_multiple_hobbies(request):
-    try:
-        data = json.loads(request.body)
-        hobby_ids = data.get('hobby_ids', [])
-        if not hobby_ids:
-            return JsonResponse({'success': False, 'error': 'No hobbies provided.'}, status=400)
-
-        hobbies = Hobby.objects.filter(id__in=hobby_ids)
-        if not hobbies.exists():
-            return JsonResponse({'success': False, 'error': 'Invalid hobby IDs provided.'}, status=400)
-        request.user.hobbies.add(*hobbies)
-        return JsonResponse({'success': True, 'message': 'Hobbies added successfully.'}, status=200)
-
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': 'Failed to add hobbies.'}, status=500)
-    
-
-@login_required
-def check_user_hobby(request):
+def check_user_hobby(request: HttpRequest) -> JsonResponse:
     """
     This checks for users hobbies and ensures a certain specific hobby is present,then returns a success or error json response.
     """
@@ -378,7 +342,7 @@ def check_user_hobby(request):
         return JsonResponse({'success': False, 'error': 'An error occurred while checking the hobby.'}, status=500)
     
 User = get_user_model()
-def get_users(request):
+def get_users(request: HttpRequest) -> JsonResponse:
     """
     Retrieve a paginated list of users filtered by age range and hobbies.
     """
@@ -417,12 +381,12 @@ def get_users(request):
 
 @login_required
 @require_http_methods(["DELETE"])
-def remove_hobby(request):
+def remove_hobby(request: HttpRequest) -> JsonResponse:
     """THIS FUNCTION is for removing the bobby from the hobby list and updating the page with the updated hobby list"""
     if request.method == "DELETE":
         try:
             body = json.loads(request.body)
-            hobby_name = body.get('hobby')  # Use 'hobby' key in DELETE body
+            hobby_name = body.get('hobby')
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'error': 'Invalid JSON payload.'}, status=400)
 
@@ -430,16 +394,13 @@ def remove_hobby(request):
         return JsonResponse({'success': False, 'error': 'Hobby name is required.'}, status=400)
 
     try:
-        # Find the hobby by name
         hobby = Hobby.objects.filter(name=hobby_name).first()
         if not hobby:
             return JsonResponse({'success': False, 'error': 'Hobby does not exist in the database.'}, status=404)
 
-        # Check if the hobby is associated with the current user
         if not request.user.hobbies.filter(id=hobby.id).exists():
             return JsonResponse({'success': False, 'error': 'You do not have this hobby.'}, status=404)
 
-        # Remove the hobby from the user's hobbies
         request.user.hobbies.remove(hobby)
         return JsonResponse({'success': True, 'message': f'Hobby "{hobby_name}" has been removed successfully.'}, status=200)
     except Exception as e:
@@ -447,25 +408,21 @@ def remove_hobby(request):
     
 
 @login_required
-def get_users_with_similar_hobbies(request):
+def get_users_with_similar_hobbies(request: HttpRequest) -> JsonResponse:
     """
     Retrieves a paginated list of users with the most similar hobbies, filtered by age range
     """
     current_user = request.user
 
-    # Get filter parameters
     min_age = int(request.GET.get('min_age', 0))  
     max_age = int(request.GET.get('max_age', 300)) 
 
-    # Calculate date of birth range
     today = date.today()
     min_dob = today - timedelta(days=max_age * 365)
     max_dob = today - timedelta(days=min_age * 365)
 
-    # Get the current user's hobbies
     current_user_hobbies = current_user.hobbies.all()
 
-    # Filter users
     users = (
         User.objects.exclude(id=current_user.id)  
         .filter(dob__range=(min_dob, max_dob))  
@@ -491,9 +448,9 @@ def get_users_with_similar_hobbies(request):
 
 
 @login_required
-def show_friends(request):
+def show_friends(request: HttpRequest) -> JsonResponse:
     try:
-        friends = request.user.friends.all()  # Assuming you have a 'friends' relation
+        friends = request.user.friends.all()
         friends_data = [
             {"id": friend.id, "username": friend.username, "email": friend.email, "hobbies": list(friend.hobbies.values_list("name", flat=True))}
             for friend in friends
