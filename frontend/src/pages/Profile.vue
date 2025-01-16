@@ -168,9 +168,9 @@ export default defineComponent({
         if (userStore.user) {
             form.value = { ...userStore.user, password: '' }; // Assign Pinia user data to form
         }
-        const closeModal = () => {
+        const closeModal = (): void => {
             isModalVisible.value = false;
-            window.location.href = '/';
+            window.location.href = "/";
         };
 
 

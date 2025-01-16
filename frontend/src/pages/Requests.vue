@@ -53,7 +53,7 @@ export default defineComponent({
         const isModalVisible = ref(true);
 
         // Close the modal and navigate away
-        const closeModal = () => {
+        const closeModal = (): void => {
             isModalVisible.value = false;
             window.location.href = "/";
         };

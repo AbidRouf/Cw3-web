@@ -56,7 +56,7 @@ export default defineComponent({
             }
         };
 
-        const closeModal = () => {
+        const closeModal = (): void => {
             isModalVisible.value = false;
             window.location.href = "/";
         };
