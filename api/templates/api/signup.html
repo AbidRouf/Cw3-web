@@ -5,6 +5,71 @@
 <head>
     <meta charset="UTF-8">
     <title>Sign Up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+        }
+
+        .signup-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 
 <body>
@@ -12,30 +77,38 @@
 
     {% if messages %}
     {% for msg in messages %}
-    <p style="color: red;">{{ msg }}</p>
+    <p class="error-message">{{ msg }}</p>
     {% endfor %}
     {% endif %}
 
-    <form method="POST">
+    <form method="POST" class="signup-form">
         {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label">Username:</label>
+            <input type="text" name="username" class="form-input" required>
+        </div>
 
-        <label>Username:</label>
-        <input type="text" name="username" required><br><br>
+        <div class="form-group">
+            <label class="form-label">Email:</label>
+            <input type="email" name="email" class="form-input">
+        </div>
 
-        <label>Email:</label>
-        <input type="email" name="email"><br><br>
+        <div class="form-group">
+            <label class="form-label">Password:</label>
+            <input type="password" name="password" class="form-input" required>
+        </div>
 
-        <label>Password:</label>
-        <input type="password" name="password" required><br><br>
+        <div class="form-group">
+            <label class="form-label">Confirm Password:</label>
+            <input type="password" name="password2" class="form-input" required>
+        </div>
 
-        <label>Confirm Password:</label>
-        <input type="password" name="password2" required><br><br>
+        <div class="form-group">
+            <label class="form-label">Date of Birth (YYYY-MM-DD):</label>
+            <input type="text" name="dob" class="form-input">
+        </div>
 
-        <!-- Optional Date of Birth -->
-        <label>Date of Birth (YYYY-MM-DD):</label>
-        <input type="text" name="dob"><br><br>
-
-        <button type="submit">Sign Up</button>
+        <button type="submit" class="submit-button">Sign Up</button>
     </form>
 </body>
 
