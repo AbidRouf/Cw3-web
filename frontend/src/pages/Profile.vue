@@ -8,7 +8,6 @@
                     <button type="button" class="btn-close" aria-label="Close" @click="closeModal"></button>
                 </div>
                 <div class="max-w-3xl p-6 bg-white rounded-lg">
-                    <!-- Header / Breadcrumb -->
                     <div class="mb-6 flex justify-between items-center">
                         <div>
                             <h1 class="text-3xl font-bold text-gray-800">My Profile</h1>
@@ -16,40 +15,34 @@
                         </div>
                     </div>
 
-                    <!-- User Information Section -->
                     <div class="mb-8">
                         <h2 class="text-2xl font-semibold text-gray-700 mb-4">User Information</h2>
                         <form @submit.prevent="handleSubmit">
                             <div class="grid grid-cols-1 gap-4">
-                                <!-- Userame Field -->
                                 <div>
                                     <label class="block text-gray-700 font-medium mb-1" for="name">Userame:</label>
                                     <input id="name" type="text" v-model="form.username" placeholder="Username"
                                         class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
                                 </div>
 
-                                <!-- Name Field -->
                                 <div>
                                     <label class="block text-gray-700 font-medium mb-1" for="name">Name:</label>
                                     <input id="name" type="text" v-model="name" placeholder="Your full name"
                                         class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
                                 </div>
 
-                                <!-- Email Field -->
                                 <div>
                                     <label class="block text-gray-700 font-medium mb-1" for="email">Email:</label>
                                     <input id="email" type="email" v-model="form.email" placeholder="you@example.com"
                                         class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
                                 </div>
 
-                                <!-- Date of Birth Field -->
                                 <div>
                                     <label class="block text-gray-700 font-medium mb-1" for="dob">Date of Birth:</label>
                                     <input id="dob" type="date" v-model="form.dob"
                                         class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
                                 </div>
 
-                                <!-- Password Fields -->
                                 <div>
                                     <label class="block text-gray-700 font-medium mb-1" for="password">New
                                         Password:</label>
@@ -68,10 +61,8 @@
                         </form>
                     </div>
 
-                    <!-- Hobbies Management Section -->
                     <div class="mb-8">
                         <h2 class="text-2xl font-semibold text-gray-700 mb-4">Hobbies</h2>
-                        <!-- Current Hobbies Display -->
                         <ul class="flex flex-wrap gap-2 mb-4">
                             <li v-for="(hobby, index) in form.hobbies" :key="index"
                                 class="px-3 py-1 bg-blue-200 text-blue-900 rounded-full flex items-center">
@@ -83,7 +74,6 @@
                             </li>
                         </ul>
 
-                        <!-- Select Existing Hobby -->
                         <div class="flex items-center gap-2 mb-4">
                             <select v-model="selectedExistingHobby"
                                 class="flex-1 border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
@@ -98,7 +88,6 @@
                             </button>
                         </div>
 
-                        <!-- Add New Hobby Option -->
                         <div class="flex items-center gap-2">
                             <input type="text" v-model="newHobby" placeholder="Add a new hobby"
                                 class="flex-1 border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
@@ -109,7 +98,6 @@
                         </div>
                     </div>
 
-                    <!-- Submission Button -->
                     <div>
                         <button type="button" @click="handleSubmit"
                             class="w-full py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700">
@@ -167,7 +155,7 @@ export default defineComponent({
         });
         const isModalVisible = ref(true)
         if (userStore.user) {
-            form.value = { ...userStore.user, password: '' }; // Assign Pinia user data to form
+            form.value = { ...userStore.user, password: '' };
         }
         const closeModal = (): void => {
             isModalVisible.value = false;
@@ -176,7 +164,7 @@ export default defineComponent({
 
 
 
-        const originalHobbies = ref<Hobby[]>([]); // List of common hobbies
+        const originalHobbies = ref<Hobby[]>([]);
         const getAllHobbies = async (): Promise<void> => {
             try {
                 const response = await fetch('/hobbies/', {
@@ -214,17 +202,16 @@ export default defineComponent({
                 const response = await fetch('/profile/add-hobby/', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded', // Use form-encoded
+                        'Content-Type': 'application/x-www-form-urlencoded',
                         'X-CSRFToken': CSRFToken,
                     },
-                    body: formData.toString(), // Send form-encoded data
+                    body: formData.toString(),
                 });
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success) {
-                        form.value.hobbies.push({ id: selectedExistingHobby.value.id, name: selectedExistingHobby.value.name }); // Add hobby name to user's list
-                        hobbycount.value += 1
-                        selectedExistingHobby.value = { id: -1, name: '' }; // Clear the selection
+                        form.value.hobbies.push({ id: selectedExistingHobby.value.id, name: selectedExistingHobby.value.name });
+                        selectedExistingHobby.value = { id: -1, name: '' };
                         alert('Hobby added successfully!');
                     } else {
                         alert(data.error || 'Failed to add the hobby.');
@@ -240,14 +227,13 @@ export default defineComponent({
 
 
         const addNewHobby = async (): Promise<void> => {
-            const hobby = newHobby.value.trim(); // Get the name of the new hobby
+            const hobby = newHobby.value.trim();
 
             if (!hobby) {
                 alert('Please enter a hobby name.');
                 return;
             }
 
-            // Construct the payload using FormData
             const formData = new FormData();
             formData.append('hobby', hobby);
 
@@ -257,7 +243,7 @@ export default defineComponent({
                     headers: {
                         'X-CSRFToken': CSRFToken,
                     },
-                    body: formData, // Send the data as FormData
+                    body: formData,
                 });
 
                 if (response.ok) {
@@ -265,10 +251,10 @@ export default defineComponent({
                     if (data.success) {
                         originalHobbies.value.push({ id: hobbycount.value, name: hobby })
                         form.value.hobbies.push({ id: hobbycount.value, name: hobby });
-                        newHobby.value = ''; // Clear the input field
+                        newHobby.value = '';
                         alert('Hobby added successfully!');
                     } else {
-                        alert(`${data.error}, Failed to add the hobby.`); // Handle error response
+                        alert(`${data.error}, Failed to add the hobby.`);
                     }
                 } else {
                     alert('Failed to add the hobby. Please try again.');
@@ -281,7 +267,7 @@ export default defineComponent({
         };
 
         const removeHobby = async (index: number): Promise<void> => {
-            const hobbyToRemove = form.value.hobbies[index].name; // Get the hobby name by index
+            const hobbyToRemove = form.value.hobbies[index].name;
 
             if (!hobbyToRemove) {
                 alert('Invalid hobby selected for removal.');
@@ -295,13 +281,13 @@ export default defineComponent({
                         'Content-Type': 'application/json',
                         'X-CSRFToken': CSRFToken,
                     },
-                    body: JSON.stringify({ hobby: hobbyToRemove }), // Send the hobby name as JSON
+                    body: JSON.stringify({ hobby: hobbyToRemove }),
                 });
 
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success) {
-                        form.value.hobbies.splice(index, 1); // Remove the hobby from the local state
+                        form.value.hobbies.splice(index, 1);
                         alert(`Hobby "${hobbyToRemove}" removed successfully!`);
                     } else {
                         alert(data.error || 'Failed to remove the hobby.');
@@ -325,7 +311,6 @@ export default defineComponent({
             try {
                 let profile = false
                 let password = false
-                // Create a form-encoded payload
                 const formData = new URLSearchParams({
                     username: form.value.username,
                     first_name: form.value.first_name,

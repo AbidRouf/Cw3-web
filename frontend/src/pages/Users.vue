@@ -70,7 +70,6 @@ export default defineComponent({
             maxAge: 300,
         });
 
-        // Function to fetch users from the backend
         const fetchUsers = async (): Promise<void> => {
             try {
                 const params = new URLSearchParams({
@@ -113,26 +112,17 @@ export default defineComponent({
             }
         };
 
-        // Call fetchUsers on component mount
         onMounted(fetchUsers);
 
-        // Load more users when the button is clicked
         const loadMore = (): void => {
             page.value += 1;
             fetchUsers();
         };
 
-        // Apply filters and reset pagination
         const applyFilters = (): void => {
             page.value = 1;
             fetchUsers();
         };
-
-        // Close the modal and navigate away
-        // const closeModal = () => {
-        //     isModalVisible.value = false;
-        //     window.location.href = "/";
-        // };
 
         const closeModal = (): void => {
             isModalVisible.value = false;

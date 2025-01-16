@@ -1,10 +1,8 @@
 <template>
     <div id="app">
         <header v-if="showHeader" class="flex flex-col items-center justify-center h-auto mt-10 space-y-6">
-            <!-- Application Title -->
             <h1 class="text-5xl font-bold text-red-600 text-center mb-4">Hobbies App</h1>
 
-            <!-- Navigation Links -->
             <div class="flex flex-col space-y-4">
                 <router-link v-if="isAuthenticated" to="/profile/">
                     <button
@@ -32,7 +30,6 @@
                 </router-link>
             </div>
 
-            <!-- Conditional Login/Logout Links -->
             <div class="flex flex-col items-center space-y-4">
                 <a v-if="!isAuthenticated" href="/login/">
                     <button
@@ -53,7 +50,6 @@
             </div>
         </header>
 
-        <!-- Main Content -->
         <router-view />
     </div>
 </template>
@@ -73,7 +69,7 @@ export default defineComponent({
             return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         };
 
-        const checkAuthStatus = async () => {
+        const checkAuthStatus = async (): Promise<void> => {
             try {
                 const response = await fetch('/auth-status/');
                 if (response.ok) {
@@ -99,7 +95,7 @@ export default defineComponent({
             }
         };
 
-        const logout = async () => {
+        const logout = async (): Promise<void> => {
             const csrfToken = getCSRFToken();
             if (!csrfToken) {
                 alert('CSRF token is missing. Please refresh the page and try again.');

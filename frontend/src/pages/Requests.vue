@@ -52,7 +52,6 @@ export default defineComponent({
         const friendRequests = ref < Request[] > ([]);
         const isModalVisible = ref(true);
 
-        // Close the modal and navigate away
         const closeModal = (): void => {
             isModalVisible.value = false;
             window.location.href = "/";
@@ -108,7 +107,6 @@ export default defineComponent({
                     throw new Error(errorData.error || 'Failed to accept friend request');
                 }
 
-                // Remove the accepted request from the list
                 friendRequests.value = friendRequests.value.filter(r => r.id !== request.id);
                 alert('Friend request accepted successfully.');
             } catch (error) {
