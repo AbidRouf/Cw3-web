@@ -25,8 +25,7 @@
                                 <div>
                                     <label class="block text-gray-700 font-medium mb-1" for="name">Userame:</label>
                                     <input id="name" type="text" v-model="form.username" placeholder="Username"
-                                        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                         />
+                                        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
                                 </div>
 
                                 <!-- Name Field -->
@@ -61,7 +60,7 @@
                                 <div>
                                     <label class="block text-gray-700 font-medium mb-1" for="confirmPassword">Confirm
                                         Password:</label>
-                                    <input id="confirmPassword" type="password" v-model="form.confirmPassword"
+                                    <input id="confirmPassword" type="password" v-model="confirmPassword"
                                         placeholder="Confirm new password"
                                         class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
                                 </div>
@@ -76,7 +75,7 @@
                         <ul class="flex flex-wrap gap-2 mb-4">
                             <li v-for="(hobby, index) in form.hobbies" :key="index"
                                 class="px-3 py-1 bg-blue-200 text-blue-900 rounded-full flex items-center">
-                                {{ hobby }}
+                                {{ hobby.name }}
                                 <button type="button" class="ml-2 text-red-500 hover:text-red-700"
                                     @click="removeHobby(index)">
                                     &times;
@@ -88,9 +87,9 @@
                         <div class="flex items-center gap-2 mb-4">
                             <select v-model="selectedExistingHobby"
                                 class="flex-1 border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                <option disabled value="">Select an existing hobby</option>
-                                <option v-for="(hobby, index) in availableHobbies" :key="index">
-                                    {{ hobby }}
+                                <option disabled :value="{ id: -1, name: '' }">Select an existing hobby</option>
+                                <option v-for="hobby in availableHobbies" :key="hobby.id" :value="hobby">
+                                    {{ hobby.name }}
                                 </option>
                             </select>
                             <button type="button" @click="addExistingHobby"
@@ -129,18 +128,36 @@ import { defineComponent, ref, computed, onMounted } from 'vue';
 export default defineComponent({
     name: 'Profile',
     setup() {
+        interface User {
+            id: number;
+            username: string;
+            email: string;
+            first_name: string;
+            last_name: string;
+            dob: Date;
+            password: string;
+            hobbies: Hobby[];
+            friends: User[];
+        }
+        interface Hobby {
+            id: number,
+            name: string
+        }
         const userStore = useUserStore();
         const CSRFToken = useCSRFStore().csrfToken;
-        const form = ref({
+        const form = ref<User>({
+            id: 0,
             username: '',
+            email: '',
             first_name: '',
             last_name: '',
-            email: '',
-            dob: Date,
+            dob: new Date(),
             password: '',
-            confirmPassword: '',
-            hobbies: [''],
-        });
+            hobbies: [] as Hobby[],
+            friends: [] as User[],
+        })
+        const confirmPassword = ref('')
+
 
         const name = computed({
             get: () => `${form.value.first_name} ${form.value.last_name}`.trim(),
@@ -151,7 +168,7 @@ export default defineComponent({
             },
         }); const isModalVisible = ref(true)
         if (userStore.user) {
-            form.value = { ...userStore.user }; // Assign Pinia user data to form
+            form.value = { ...userStore.user, password: '' }; // Assign Pinia user data to form
         }
         const closeModal = () => {
             isModalVisible.value = false;
@@ -160,7 +177,7 @@ export default defineComponent({
 
 
 
-        const originalHobbies = ref(['']); // List of common hobbies
+        const originalHobbies = ref<Hobby[]>([]); // List of common hobbies
         const getAllHobbies = async () => {
             try {
                 const response = await fetch('/hobbies/', {
@@ -168,7 +185,7 @@ export default defineComponent({
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    originalHobbies.value = data.hobbies.map((hobby: { name: string; }) => hobby.name);
+                    originalHobbies.value = data.hobbies.map((hobby: { id: number, name: string; }) => ({ id: hobby.id, name: hobby.name }));
                 } else {
                     alert('Failed to get all hobbies');
                 }
@@ -179,21 +196,22 @@ export default defineComponent({
         onMounted(() => {
             getAllHobbies();
         });
+        const hobbycount = ref(originalHobbies.value.length)
         const availableHobbies = computed(() =>
-            originalHobbies.value.filter(hobby => !form.value.hobbies.includes(hobby))
+            originalHobbies.value.filter((hobby) => !form.value.hobbies.some((userHobby) => userHobby.name === hobby.name))
         );
 
-        const selectedExistingHobby = ref('');
+        const selectedExistingHobby = ref<Hobby>({ id: -1, name: '' });
         const newHobby = ref('');
 
 
         const addExistingHobby = async () => {
-            if (!selectedExistingHobby.value) {
+            if (!selectedExistingHobby.value || selectedExistingHobby.value.id === -1) {
                 alert('Please select a hobby to add.');
                 return;
             }
             const formData = new URLSearchParams();
-            formData.append('hobby_name', selectedExistingHobby.value);
+            formData.append('hobby_name', selectedExistingHobby.value.name);
             try {
                 const response = await fetch('/profile/add-hobby/', {
                     method: 'POST',
@@ -203,12 +221,12 @@ export default defineComponent({
                     },
                     body: formData.toString(), // Send form-encoded data
                 });
-
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success) {
-                        form.value.hobbies.push(selectedExistingHobby.value); // Add hobby name to user's list
-                        selectedExistingHobby.value = ''; // Clear the selection
+                        form.value.hobbies.push({ id: selectedExistingHobby.value.id, name: selectedExistingHobby.value.name }); // Add hobby name to user's list
+                        hobbycount.value += 1
+                        selectedExistingHobby.value = { id: -1, name: '' }; // Clear the selection
                         alert('Hobby added successfully!');
                     } else {
                         alert(data.error || 'Failed to add the hobby.');
@@ -247,8 +265,8 @@ export default defineComponent({
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success) {
-                        originalHobbies.value.push(hobby)
-                        form.value.hobbies.push(hobby); // Add the new hobby to the user's list
+                        originalHobbies.value.push({ id: hobbycount.value, name: hobby })
+                        form.value.hobbies.push({ id: hobbycount.value, name: hobby });
                         newHobby.value = ''; // Clear the input field
                         alert('Hobby added successfully!');
                     } else {
@@ -265,7 +283,7 @@ export default defineComponent({
         };
 
         const removeHobby = async (index: number) => {
-            const hobbyToRemove = form.value.hobbies[index]; // Get the hobby name by index
+            const hobbyToRemove = form.value.hobbies[index].name; // Get the hobby name by index
 
             if (!hobbyToRemove) {
                 alert('Invalid hobby selected for removal.');
@@ -302,7 +320,7 @@ export default defineComponent({
 
 
         const handleSubmit = async () => {
-            if (form.value.password !== form.value.confirmPassword) {
+            if (form.value.password !== confirmPassword.value) {
                 alert('Passwords do not match.');
                 return;
             }
@@ -339,7 +357,7 @@ export default defineComponent({
                 if (form.value.password) {
                     const formPasswordData = new URLSearchParams({
                         new_password: form.value.password,
-                        confirm_password: form.value.confirmPassword,
+                        confirm_password: confirmPassword.value,
                     })
                     const passwordresponse = await fetch('/profile/change-password/', {
                         method: 'POST',
@@ -370,9 +388,7 @@ export default defineComponent({
                 }
                 if (profile) {
                     alert("Profile updated successfully!")
-                    setTimeout(() => {
-                        closeModal();
-                    }, 200);
+                    closeModal();
                     return
                 }
             } catch (error) {
@@ -393,6 +409,7 @@ export default defineComponent({
             closeModal,
             isModalVisible,
             name,
+            confirmPassword,
         };
     },
 });

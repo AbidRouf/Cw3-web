@@ -1,35 +1,51 @@
 import { defineStore } from 'pinia';
-
+interface User {
+    id: number;
+    username: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    dob: Date;
+    password: string;
+    hobbies: Hobby[];
+    friends: User[];
+}
+interface Hobby {
+    id: number,
+    name: string
+}
 export const useUserStore = defineStore('user', {
-  state: () => ({
-    user: {
-      username: '',
-      first_name: '',
-      last_name: '',
-      email: '',
-      dob: Date,
-      password: '',
-      confirmPassword: '',
-      hobbies: [''],
-    }, // Initial state
-  }),
-  actions: {
-    setUser(userData: any) {
-      this.user = userData;
+    state: (): { user: User } => ({
+        user: {
+            id: -1,
+            username: '',
+            first_name: '',
+            last_name: '',
+            email: '',
+            dob: new Date(),
+            password: '',
+            hobbies: [],
+            friends: []
+        }, // Initial state
+    }),
+    actions: {
+        setUser(userData: any) {
+            this.user = userData;
+        },
+        clearUser() {
+            this.user = {
+                id: -1,
+                username: '',
+                first_name: '',
+                last_name: '',
+                email: '',
+                dob: new Date(),
+                password: '',
+                hobbies: [],
+                friends: []
+            }; // Reset to the initial state
+        },
     },
-    clearUser() {
-      this.user = {
-        username: '',
-        first_name: '',
-        last_name: '',
-        email: '',
-        dob: Date,
-        password: '',
-        confirmPassword: '',
-        hobbies: [''],
-      }; // Reset to the initial state
-    },
-  },
 });
 
 export const useCSRFStore = defineStore('csrf', {

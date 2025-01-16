@@ -204,7 +204,7 @@ def auth_status(request):
 @require_http_methods(["GET"])
 def profile_view(request):
     try:
-        hobbies = list(request.user.hobbies.values_list('name', flat=True))
+        hobbies = list(request.user.hobbies.values())
         user_data = {
             'id': request.user.id,
             'username': request.user.username,

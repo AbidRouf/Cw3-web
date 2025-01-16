@@ -20,7 +20,7 @@ class User(AbstractUser):
     this will extend the default user model to include date of birth and hobbies and to grant the user the ability to have friends on the platform
     """
     dob = models.DateField(
-        verbose_name="Date of Birth", null=True, blank=True
+        verbose_name="Date of Birth"
     )
     hobbies = models.ManyToManyField(Hobby)
     friends = models.ManyToManyField('self', symmetrical=True, blank=True)
