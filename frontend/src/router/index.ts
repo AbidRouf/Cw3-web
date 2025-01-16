@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Profile from '../pages/Profile.vue';
 import Users from '../pages/Users.vue';
 import Requests from '../pages/Requests.vue';
-import showfriends from '../pages/showfriends.vue';
+import ShowFriends from '../pages/ShowFriends.vue';
 // Uncomment these if you have Login and Signup components
 // import Login from '../pages/Login.vue';
 // import Signup from '../pages/Signup.vue';
@@ -18,8 +18,8 @@ const router = createRouter({
     routes: [
         { path: '/profile/', name: 'Profile', component: Profile }, // Profile page route
         { path: '/users/', name: 'Users', component: Users }, // Users page route
-        { path: '/requests/', name: 'Requests', component: Requests }, // Users page route
-        {path: '/showfriends', name: 'ShowFriends', component: showfriends }
+        { path: '/requests/', name: 'Requests', component: Requests }, // Requests page route
+        { path: '/showfriends', name: 'ShowFriends', component: ShowFriends }
 
         // Uncomment these if Login and Signup pages are implemented
         // { path: '/login/', name: 'Login', component: Login },
