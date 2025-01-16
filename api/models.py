@@ -17,12 +17,13 @@ class Hobby(models.Model):
 
 class User(AbstractUser):
     """
-    this will extend the default user model to include date of birth and hobbies
+    this will extend the default user model to include date of birth and hobbies and to grant the user the ability to have friends on the platform
     """
     dob = models.DateField(
         verbose_name="Date of Birth", null=True, blank=True
     )
     hobbies = models.ManyToManyField(Hobby)
+    friends = models.ManyToManyField('self', symmetrical=True, blank=True)
 
 class FriendRequest(models.Model):
     from_user = models.ForeignKey(User, related_name='friend_requests_sent', on_delete=models.CASCADE)
