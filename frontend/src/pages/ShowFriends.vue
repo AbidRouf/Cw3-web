@@ -40,7 +40,7 @@ export default defineComponent({
         const isModalVisible = ref(true);
         const friends = ref<User[]>([]);
 
-        const fetchFriends = async () => {
+        const fetchFriends = async (): Promise<void> => {
             try {
                 const response = await fetch('/api/friends/');
                 if (!response.ok) throw new Error('Failed to fetch friends');
