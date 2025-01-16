@@ -7,9 +7,9 @@ from django.contrib.auth.models import AbstractUser
 
 class Hobby(models.Model):
     """Represents a hobby for users to associate with on the platform"""
-    name = models.CharField(max_length=100)
+    name: str = models.CharField(max_length=100)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Returns the hobby into its corresponding string representation
         """
@@ -19,47 +19,29 @@ class User(AbstractUser):
     """
     this will extend the default user model to include date of birth and hobbies and to grant the user the ability to have friends on the platform
     """
-    dob = models.DateField(
+    dob: models.DateField = models.DateField(
         verbose_name="Date of Birth"
     )
-    hobbies = models.ManyToManyField(Hobby)
-    friends = models.ManyToManyField('self', symmetrical=True, blank=True)
+    hobbies: models.ManyToManyField = models.ManyToManyField(Hobby)
+    friends: models.ManyToManyField = models.ManyToManyField('self', symmetrical=True, blank=True)
 
 class FriendRequest(models.Model):
-    from_user = models.ForeignKey(User, related_name='friend_requests_sent', on_delete=models.CASCADE)
-    to_user = models.ForeignKey(User, related_name='friend_requests_received', on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    accepted = models.BooleanField(default=False)
+    from_user: User = models.ForeignKey(User, related_name='friend_requests_sent', on_delete=models.CASCADE)
+    to_user: User = models.ForeignKey(User, related_name='friend_requests_received', on_delete=models.CASCADE)
+    timestamp: models.DateTimeField = models.DateTimeField(auto_now_add=True)
+    accepted: bool = models.BooleanField(default=False)
     
-    def __str__(self):
+    def __str__(self) -> str:
         return f'From {self.from_user} to {self.to_user}'
 
 class PageView(models.Model):
     """
     This is for keeping track of the number of page views
     """
-    count = models.IntegerField(default=0)
+    count: int = models.IntegerField(default=0)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         For returning the page view function count as a string
         """
         return f"Page view count: {self.count}"
-
-class friendRequests(models.Model):
-    """this is for sending and recieving friend requests"""
-    receiving = models.ForeignKey(User, on_delete=models.CASCADE, related_name="received_requests")
-    sending = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_requests")
-    requeststatus = models.CharField(
-        max_length=10,
-        choices=[('pendingrq', 'Pendingrq'), ('acceptedrq', 'Acceptedrq')],
-        default='pendingrq'
-    )
-    rqsentat = models.DateTimeField(auto_now_add=True)
-    def __str__(self):
-        """
-        Returns the friend request details as a string
-        """
-        return f"{self.sending.username} -> {self.receiving.username} ({self.requeststatus})"
-
-    

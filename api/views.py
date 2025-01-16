@@ -124,7 +124,8 @@ def login_view(request: HttpRequest) -> HttpResponse:
             return render(request, 'api/login.html', {'error': 'Invalid credentials.'})
     else:  
         return render(request, 'api/login.html')
-        
+
+@ensure_csrf_cookie
 def signup_view(request: HttpRequest) -> HttpResponse:
     """This handle the user registration, then validates input befre creating a new user then redirecting the user to 'login' on success or will display a corresponding error depended on failiure """
     if request.method == 'GET':
@@ -225,9 +226,6 @@ def change_user_password(request: HttpRequest) -> JsonResponse:
         return JsonResponse({'success': False, 'error': 'Failed to update password.'}, status=500)
 
 @ensure_csrf_cookie
-def get_csrf_token(request: HttpRequest) -> JsonResponse:
-    return JsonResponse({'detail': 'CSRF cookie set'})
-
 def main_spa(request: HttpRequest) -> HttpResponse:
     """
     This function renders the SPA main page.
@@ -320,64 +318,8 @@ def add_hobby(request: HttpRequest) -> JsonResponse:
             return JsonResponse({'success': True, 'message': 'Hobby added successfully.'}, status=200)
         except Exception as e:
             return JsonResponse({'success': False, 'error': 'Failed to add hobby.'}, status=500)
-
-@login_required
-def check_user_hobby(request: HttpRequest) -> JsonResponse:
-    """
-    This checks for users hobbies and ensures a certain specific hobby is present,then returns a success or error json response.
-    """
-    hobby_name = request.GET.get('hobby')
-    if not hobby_name:
-        return JsonResponse({'success': False, 'error': 'Hobby name is required.'}, status=400)
-
-    try:
-        hobby = Hobby.objects.filter(name=hobby_name).first()
-        if not hobby:
-            return JsonResponse({'success': False, 'error': 'Hobby does not exist in the database.'}, status=404)
-
-        user_has_hobby = request.user.hobbies.filter(id=hobby.id).exists()
-        return JsonResponse({'success': True, 'exists': user_has_hobby}, status=200)
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': 'An error occurred while checking the hobby.'}, status=500)
     
 User = get_user_model()
-def get_users(request: HttpRequest) -> JsonResponse:
-    """
-    Retrieve a paginated list of users filtered by age range and hobbies.
-    """
-    min_age = int(request.GET.get('min_age', 0))
-    max_age = int(request.GET.get('max_age', 120))
-    hobby = request.GET.get('hobby')
-
-    """ Filter users by hobbies and age range"""
-    users = User.objects.all()
-    if hobby:
-        users = users.filter(hobbies__name=hobby)
-    if min_age or max_age:
-        today = date.today()
-        min_dob = today - timedelta(days=max_age * 365)
-        max_dob = today - timedelta(days=min_age * 365)
-        users = users.filter(dob__range=(min_dob, max_dob))
-
-    """ this section Paginates the user list to leave 10 users per page"""
-    paginator = Paginator(users, 10)
-    page_number = request.GET.get('page', 1)
-    page = paginator.get_page(page_number)
-
- 
-    user_data = [
-        {
-            "id": user.id,
-            "username": user.username,
-            "hobbies": list(user.hobbies.values_list('name', flat=True)),
-        }
-        for user in page
-    ]
-
-    return JsonResponse({'users': user_data, 'has_next': page.has_next()}, status=200)
-
-
-
 @login_required
 @require_http_methods(["DELETE"])
 def remove_hobby(request: HttpRequest) -> JsonResponse:

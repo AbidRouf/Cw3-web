@@ -26,7 +26,7 @@ export const useUserStore = defineStore('user', {
             password: '',
             hobbies: [],
             friends: []
-        }, // Initial state
+        },
     }),
     actions: {
         setUser(userData: any) {
@@ -43,28 +43,25 @@ export const useUserStore = defineStore('user', {
                 password: '',
                 hobbies: [],
                 friends: []
-            }; // Reset to the initial state
+            };
         },
     },
 });
 
 export const useCSRFStore = defineStore('csrf', {
     state: () => ({
-        csrfToken: '', // Initialize token as empty
+        csrfToken: '',
     }),
     actions: {
-        // Set CSRF token manually
         setCSRFToken(token: string) {
             this.csrfToken = token;
         },
 
-        // Dynamically fetch the CSRF token
         fetchCSRFToken() {
             const token =
                 document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
             if (token) {
                 this.csrfToken = token;
-                // console.log('CSRF Token fetched and stored:', this.csrfToken);
             } else {
                 console.error('Failed to fetch CSRF token.');
             }
