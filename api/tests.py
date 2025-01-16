@@ -15,7 +15,7 @@ class SignUpTest(unittest.TestCase):
         # Configure WebDriver options (e.g., ChromeDriver path)
         chrome_options = Options()
         chrome_options.add_argument("--start-maximized")
-        cls.driver = webdriver.Chrome(service=Service("/path/to/chromedriver"), options=chrome_options)  # Update path
+        cls.driver = webdriver.Chrome(service=Service(r"C:\Users\Moham\.wdm\drivers\chromedriver"), options=chrome_options)  # Update path
 
     def test_signup_and_success_page(self):
         driver = self.driver
