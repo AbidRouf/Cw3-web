@@ -49,8 +49,8 @@ export default defineComponent({
     name: 'FriendRequests',
     setup() {
         const CSRFToken = useCSRFStore().csrfToken;
-        const friendRequests = ref < Request[] > ([]);
-        const isModalVisible = ref(true);
+        const friendRequests = ref<Request[]>([]);
+        const isModalVisible = ref<boolean>(true);
 
         const closeModal = (): void => {
             isModalVisible.value = false;
@@ -66,7 +66,7 @@ export default defineComponent({
                 console.error('Error fetching friend requests:', error);
             }
         };
-        const declineFriendRequest = async (request: Request): Promise<void>=> {
+        const declineFriendRequest = async (request: Request): Promise<void> => {
             try {
                 const formData = new FormData();
                 formData.append('to_user_id', request.from_user_id);

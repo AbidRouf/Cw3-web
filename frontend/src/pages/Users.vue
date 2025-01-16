@@ -56,16 +56,19 @@ interface User {
     hobbies: Hobby[];
     dob: Date;
 }
-
+interface Filter{
+    minAge: number;
+    maxAge: number;
+}
 export default defineComponent({
     name: 'OtherUsers',
     setup() {
         const CSRFToken = useCSRFStore().csrfToken;
-        const isModalVisible = ref(true);
+        const isModalVisible = ref<boolean>(true);
         const users = ref<User[]>([]);
-        const hasNext = ref(false);
-        const page = ref(1);
-        const filters = ref({
+        const hasNext = ref<boolean>(false);
+        const page = ref<number>(1);
+        const filters = ref<Filter>({
             minAge: 0,
             maxAge: 300,
         });

@@ -113,23 +113,24 @@
 <script lang="ts">
 import { useCSRFStore, useUserStore } from '../store';
 import { defineComponent, ref, computed, onMounted } from 'vue';
+interface User {
+    id: number;
+    username: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    dob: Date;
+    password: string;
+    hobbies: Hobby[];
+}
+interface Hobby {
+    id: number,
+    name: string
+}
 export default defineComponent({
     name: 'Profile',
     setup() {
-        interface User {
-            id: number;
-            username: string;
-            email: string;
-            first_name: string;
-            last_name: string;
-            dob: Date;
-            password: string;
-            hobbies: Hobby[];
-        }
-        interface Hobby {
-            id: number,
-            name: string
-        }
+
         const userStore = useUserStore();
         const CSRFToken = useCSRFStore().csrfToken;
         const form = ref<User>({
@@ -142,7 +143,7 @@ export default defineComponent({
             password: '',
             hobbies: [] as Hobby[],
         })
-        const confirmPassword = ref('')
+        const confirmPassword = ref<string>('')
 
 
         const name = computed({
@@ -153,7 +154,7 @@ export default defineComponent({
                 form.value.last_name = lastName.join(' ') || '';
             },
         });
-        const isModalVisible = ref(true)
+        const isModalVisible = ref<boolean>(true)
         if (userStore.user) {
             form.value = { ...userStore.user, password: '' };
         }
@@ -183,13 +184,13 @@ export default defineComponent({
         onMounted(() => {
             getAllHobbies();
         });
-        const hobbycount = ref(originalHobbies.value.length)
+        const hobbycount = ref<number>(originalHobbies.value.length)
         const availableHobbies = computed(() =>
             originalHobbies.value.filter((hobby) => !form.value.hobbies.some((userHobby) => userHobby.name === hobby.name))
         );
 
         const selectedExistingHobby = ref<Hobby>({ id: -1, name: '' });
-        const newHobby = ref('');
+        const newHobby = ref<string>('');
 
         const addExistingHobby = async (): Promise<void> => {
             if (!selectedExistingHobby.value || selectedExistingHobby.value.id === -1) {

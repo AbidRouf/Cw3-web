@@ -62,7 +62,7 @@ export default defineComponent({
     name: 'App',
     setup() {
         const userStore = useUserStore();
-        const isAuthenticated = ref(false);
+        const isAuthenticated = ref<boolean>(false);
         const showHeader = computed(() => location.pathname === '/');
 
         const getCSRFToken = (): string => {

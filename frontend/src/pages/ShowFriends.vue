@@ -37,7 +37,7 @@ interface User {
 export default defineComponent({
     name: 'ShowFriends',
     setup() {
-        const isModalVisible = ref(true);
+        const isModalVisible = ref<boolean>(true);
         const friends = ref<User[]>([]);
 
         const fetchFriends = async (): Promise<void> => {
