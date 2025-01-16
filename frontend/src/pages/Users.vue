@@ -71,7 +71,7 @@ export default defineComponent({
         });
 
         // Function to fetch users from the backend
-        const fetchUsers = async () => {
+        const fetchUsers = async (): Promise<void> => {
             try {
                 const params = new URLSearchParams({
                     page: page.value.toString(),
@@ -91,7 +91,7 @@ export default defineComponent({
             }
         };
 
-        const sendFriendRequest = async (toUserId: number) => {
+        const sendFriendRequest = async (toUserId: number): Promise<void> => {
             try {
                 const response = await fetch('/send-friend-request/', {
                     method: 'POST',
@@ -117,13 +117,13 @@ export default defineComponent({
         onMounted(fetchUsers);
 
         // Load more users when the button is clicked
-        const loadMore = () => {
+        const loadMore = (): void => {
             page.value += 1;
             fetchUsers();
         };
 
         // Apply filters and reset pagination
-        const applyFilters = () => {
+        const applyFilters = (): void => {
             page.value = 1;
             fetchUsers();
         };
