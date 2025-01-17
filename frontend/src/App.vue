@@ -6,7 +6,7 @@
             <div class="flex flex-col space-y-4">
                 <router-link v-if="isAuthenticated" to="/profile/">
                     <button
-                        class="w-48 min-w-16 bg-gradient-to-r from-blue-500 to-gray-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-gray-600 hover:to-gray-600 transition-all duration-300">
+                        class="w-48 min-w-16 bg-gradient-to-r from-blue-500 to-gray-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-gray-600 hover:to-gray-600 transition-all duration-300" id="profile">
                         Manage Profile
                     </button>
                 </router-link>

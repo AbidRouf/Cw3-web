@@ -364,9 +364,7 @@ export default defineComponent({
                     }
                     if (password && profile) {
                         alert("Profile and password updated successfully!")
-                        setTimeout(() => {
-                            closeModal();
-                        }, 200);
+                        closeModal();
                         return
                     }
                 }
