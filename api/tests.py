@@ -37,19 +37,19 @@ class HobbiesAppSeleniumTests(LiveServerTestCase):
 
     def test_signup(self):
         self.selenium.get(f"{self.live_server_url}/signup/")
-        WebDriverWait(self.selenium, 10).until(EC.presence_of_element_located((By.ID, "id_username"))).send_keys("newuser")
-        self.selenium.find_element(By.ID, "id_email").send_keys("newuser@example.com")
-        self.selenium.find_element(By.ID, "id_password").send_keys("password123")
-        self.selenium.find_element(By.ID, "id_password2").send_keys("password123")
-        self.selenium.find_element(By.ID, "id_dob").send_keys("2001-02-02")
+        WebDriverWait(self.selenium, 10).until(EC.presence_of_element_located((By.ID, "username"))).send_keys("newuser")
+        self.selenium.find_element(By.ID, "email").send_keys("newuser@example.com")
+        self.selenium.find_element(By.ID, "password").send_keys("password123")
+        self.selenium.find_element(By.ID, "password2").send_keys("password123")
+        self.selenium.find_element(By.ID, "dob").send_keys("2001-02-02")
         self.selenium.find_element(By.CSS_SELECTOR, ".submit-button").click()
 
         self.assertIn("You have successfully registered", self.selenium.page_source)
 
     def test_login(self):
         self.selenium.get(f"{self.live_server_url}/login/")
-        WebDriverWait(self.selenium, 10).until(EC.presence_of_element_located((By.ID, "id_username"))).send_keys("user1")
-        self.selenium.find_element(By.ID, "id_password").send_keys("password1")
+        WebDriverWait(self.selenium, 10).until(EC.presence_of_element_located((By.ID, "username"))).send_keys("user1")
+        self.selenium.find_element(By.ID, "password").send_keys("password1")
         self.selenium.find_element(By.CSS_SELECTOR, ".submit-button").click()
 
         self.assertIn("You are now logged in", self.selenium.page_source)
