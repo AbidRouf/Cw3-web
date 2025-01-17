@@ -16,7 +16,7 @@ class HobbiesAppSeleniumTests(LiveServerTestCase):
         super().setUpClass()
 
         options = Options()
-        options.add_argument("--headless")
+        # options.add_argument("--headless")
         options.add_argument("--disable-gpu")
         cls.selenium = Chrome(options=options)
         cls.selenium.implicitly_wait(10)
@@ -57,48 +57,60 @@ class HobbiesAppSeleniumTests(LiveServerTestCase):
 
     def test_edit_profile(self):
         self.selenium.get(f"{self.live_server_url}/login/")
-        WebDriverWait(self.selenium, 10).until(
-            EC.presence_of_element_located((By.ID, "username"))
-        ).send_keys("user1")
+        WebDriverWait(self.selenium, 10).until(EC.presence_of_element_located((By.ID, "username"))).send_keys("user1")
         self.selenium.find_element(By.ID, "password").send_keys("password1")
         self.selenium.find_element(By.CSS_SELECTOR, ".submit-button").click()
-
-        # Navigate to the profile page
         profile_button = WebDriverWait(self.selenium, 10).until(
-            EC.presence_of_element_located((By.ID, "profile"))
+           EC.presence_of_element_located((By.ID, "profile"))
         )
         profile_button.click()
-
-        # Select 'Football' and 'Cycling' from the dropdown
-        dropdown = self.selenium.find_element(By.CSS_SELECTOR, "select[v-model='selectedExistingHobby']")
-        dropdown.click()
-        self.selenium.find_element(By.XPATH, "//option[text()='Football']").click()
-        dropdown.click()  # Reopen the dropdown
-        self.selenium.find_element(By.XPATH, "//option[text()='Cycling']").click()
-
-        # Add 'Singing', 'Gaming', and 'Driving' as new hobbies
-        new_hobby_input = self.selenium.find_element(By.CSS_SELECTOR, "input[v-model='newHobby']")
-        for hobby in ["Singing", "Gaming", "Driving"]:
-            new_hobby_input.clear()
-            new_hobby_input.send_keys(hobby)
-            self.selenium.find_element(By.CSS_SELECTOR, "button[@click='addNewHobby']").click()
-
-        # Remove 'Football' and 'Singing'
-        for hobby_to_remove in ["Football", "Singing"]:
-            hobby_element = self.selenium.find_element(By.XPATH, f"//li[contains(text(), '{hobby_to_remove}')]")
-            remove_button = hobby_element.find_element(By.XPATH, ".//button")
-            remove_button.click()
-
-        # Save changes
-        self.selenium.find_element(By.CSS_SELECTOR, "button[@click='handleSubmit']").click()
-
-        # Verify success alert
+        self.selenium.find_element(By.ID, "name").send_keys("User's Full Name")
+        email = self.selenium.find_element(By.ID, "email")
+        email.clear()
+        email.send_keys("user1newemail@example.com")
+        self.selenium.find_element(By.ID, "dob").send_keys("12-12-1999")
+        self.selenium.find_element(By.ID, "password").send_keys("newpassword1")
+        self.selenium.find_element(By.ID, "confirmPassword").send_keys("newpassword1")
+        self.selenium.find_element(By.ID, "Football").click()
+        self.selenium.find_element(By.ID, "ExistingHobbyButton").click()
+        WebDriverWait(self.selenium, 2).until(EC.alert_is_present())
+        self.selenium.switch_to.alert.accept()
+        self.selenium.find_element(By.ID, "Cycling").click()
+        self.selenium.find_element(By.ID, "ExistingHobbyButton").click()
+        WebDriverWait(self.selenium, 2).until(EC.alert_is_present())
+        self.selenium.switch_to.alert.accept()
+        self.selenium.find_element(By.ID, "NewHobby").send_keys("Singing")
+        self.selenium.find_element(By.ID, "NewHobbyButton").click()
+        WebDriverWait(self.selenium, 2).until(EC.alert_is_present())
+        self.selenium.switch_to.alert.accept()
+        self.selenium.find_element(By.ID, "NewHobby").send_keys("Gaming")
+        self.selenium.find_element(By.ID, "NewHobbyButton").click()
+        WebDriverWait(self.selenium, 2).until(EC.alert_is_present())
+        self.selenium.switch_to.alert.accept()
+        self.selenium.find_element(By.ID, "NewHobby").send_keys("Driving")
+        self.selenium.find_element(By.ID, "NewHobbyButton").click()
+        WebDriverWait(self.selenium, 2).until(EC.alert_is_present())
+        self.selenium.switch_to.alert.accept()
+        self.selenium.find_element(By.ID, "Remove Hobby Football").click()
+        WebDriverWait(self.selenium, 2).until(EC.alert_is_present())
+        self.selenium.switch_to.alert.accept()
+        self.selenium.find_element(By.ID, "Remove Hobby Singing").click()
+        WebDriverWait(self.selenium, 2).until(EC.alert_is_present())
+        self.selenium.switch_to.alert.accept()
+        self.selenium.find_element(By.ID, "SaveButton").click()
         WebDriverWait(self.selenium, 10).until(EC.alert_is_present())
-        alert = self.selenium.switch_to.alert
+        alert = self.selenium.switch_to.alert.text
         self.assertEqual(
-            alert.text,
+            alert,
             "Profile and password updated successfully!",
-            f"Unexpected alert message: {alert.text}"
+            f"Unexpected alert message: {alert}"
         )
-        alert.accept()
+        alert.dismiss()
+        # self.selenium.find_element(By.CSS_SELECTOR, ".submit-button").click()
 
+        # # Wait for the profile page to load
+        # WebDriverWait(self.selenium, 10).until(EC.presence_of_element_located((By.LINK_TEXT, "Manage Profile"))).click()
+
+        # self.selenium.find_element(By.CSS_SELECTOR, ".save-button").click()
+
+        # self.assertIn("Profile updated successfully", self.selenium.page_source)

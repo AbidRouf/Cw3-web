@@ -64,10 +64,10 @@
                     <div class="mb-8">
                         <h2 class="text-2xl font-semibold text-gray-700 mb-4">Hobbies</h2>
                         <ul class="flex flex-wrap gap-2 mb-4">
-                            <li v-for="(hobby, index) in form.hobbies" :key="index"
+                            <li v-for="(hobby, index) in form.hobbies" :key="index" :id="hobby.name"
                                 class="px-3 py-1 bg-blue-200 text-blue-900 rounded-full flex items-center">
                                 {{ hobby.name }}
-                                <button type="button" class="ml-2 text-red-500 hover:text-red-700"
+                                <button type="button" class="ml-2 text-red-500 hover:text-red-700" :id="'Remove Hobby ' + hobby.name"
                                     @click="removeHobby(index)">
                                     &times;
                                 </button>
@@ -76,23 +76,23 @@
 
                         <div class="flex items-center gap-2 mb-4">
                             <select v-model="selectedExistingHobby"
-                                class="flex-1 border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                class="flex-1 border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" id="ExistingHobby">
                                 <option disabled :value="{ id: -1, name: '' }">Select an existing hobby</option>
-                                <option v-for="hobby in availableHobbies" :key="hobby.id" :value="hobby">
+                                <option v-for="hobby in availableHobbies" :key="hobby.id" :value="hobby" :id="hobby.name">
                                     {{ hobby.name }}
                                 </option>
                             </select>
                             <button type="button" @click="addExistingHobby"
-                                class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                                class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600" id="ExistingHobbyButton">
                                 Add Hobby
                             </button>
                         </div>
 
                         <div class="flex items-center gap-2">
                             <input type="text" v-model="newHobby" placeholder="Add a new hobby"
-                                class="flex-1 border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                                class="flex-1 border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" id="NewHobby"/>
                             <button type="button" @click="addNewHobby"
-                                class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">
+                                class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600" id="NewHobbyButton">
                                 Add Hobby
                             </button>
                         </div>
@@ -100,7 +100,7 @@
 
                     <div>
                         <button type="button" @click="handleSubmit"
-                            class="w-full py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700">
+                            class="w-full py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700" id="SaveButton">
                             Save
                         </button>
                     </div>
