@@ -21,7 +21,7 @@
                             <div class="grid grid-cols-1 gap-4">
                                 <div>
                                     <label class="block text-gray-700 font-medium mb-1" for="name">Userame:</label>
-                                    <input id="name" type="text" v-model="form.username" placeholder="Username"
+                                    <input id="username" type="text" v-model="form.username" placeholder="Username"
                                         class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
                                 </div>
 

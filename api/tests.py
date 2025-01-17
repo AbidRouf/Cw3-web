@@ -64,6 +64,9 @@ class HobbiesAppSeleniumTests(LiveServerTestCase):
            EC.presence_of_element_located((By.ID, "profile"))
         )
         profile_button.click()
+        username = self.selenium.find_element(By.ID, "username")
+        username.clear()
+        username.send_keys("newusername")
         self.selenium.find_element(By.ID, "name").send_keys("User's Full Name")
         email = self.selenium.find_element(By.ID, "email")
         email.clear()
@@ -99,13 +102,14 @@ class HobbiesAppSeleniumTests(LiveServerTestCase):
         self.selenium.switch_to.alert.accept()
         self.selenium.find_element(By.ID, "SaveButton").click()
         WebDriverWait(self.selenium, 10).until(EC.alert_is_present())
-        alert = self.selenium.switch_to.alert.text
+        alert = self.selenium.switch_to.alert
+        alert.text
         self.assertEqual(
-            alert,
+            alert.text,
             "Profile and password updated successfully!",
-            f"Unexpected alert message: {alert}"
+            f"Unexpected alert message: {alert.text}"
         )
-        alert.dismiss()
+        alert.accept()
         # self.selenium.find_element(By.CSS_SELECTOR, ".submit-button").click()
 
         # # Wait for the profile page to load
