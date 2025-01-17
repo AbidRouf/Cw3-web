@@ -6,25 +6,25 @@
             <div class="flex flex-col space-y-4">
                 <router-link v-if="isAuthenticated" to="/profile/">
                     <button
-                        class="w-48 min-w-16 bg-gradient-to-r from-blue-500 to-gray-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-gray-600 hover:to-gray-600 transition-all duration-300">
+                        class="w-48 min-w-16 bg-gradient-to-r from-blue-500 to-gray-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-gray-600 hover:to-gray-600 transition-all duration-300" id="profile">
                         Manage Profile
                     </button>
                 </router-link>
                 <router-link v-if="isAuthenticated" to="/users/">
                     <button
-                        class="w-48 min-w-16 bg-gradient-to-r from-blue-500 to-gray-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-gray-600 hover:to-gray-600 transition-all duration-300">
+                        class="w-48 min-w-16 bg-gradient-to-r from-blue-500 to-gray-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-gray-600 hover:to-gray-600 transition-all duration-300" id="users">
                         See Users
                     </button>
                 </router-link>
                 <router-link v-if="isAuthenticated" to="/requests/">
                     <button
-                        class="w-48 min-w-16 bg-gradient-to-r from-blue-500 to-gray-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-gray-600 hover:to-gray-600 transition-all duration-300">
+                        class="w-48 min-w-16 bg-gradient-to-r from-blue-500 to-gray-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-gray-600 hover:to-gray-600 transition-all duration-300" id="requests">
                         See Requests
                     </button>
                 </router-link>
                 <router-link v-if="isAuthenticated" to="/showfriends/">
                     <button
-                        class="w-48 min-w-16 bg-gradient-to-r from-blue-500 to-gray-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-gray-600 hover:to-gray-600 transition-all duration-300">
+                        class="w-48 min-w-16 bg-gradient-to-r from-blue-500 to-gray-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:from-gray-600 hover:to-gray-600 transition-all duration-300" id="friends">
                         Show Friends
                     </button>
                 </router-link>
@@ -32,7 +32,7 @@
 
             <div class="flex flex-col items-center space-y-4">
                 <a v-if="!isAuthenticated" href="/login/">
-                    <button
+                    <button id="login"
                         class="bg-blue-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:bg-blue-600 transition-all duration-300">
                         Login
                     </button>
@@ -43,7 +43,7 @@
                         Sign Up
                     </button>
                 </a>
-                <button v-if="isAuthenticated" @click="logout"
+                <button id="logout" v-if="isAuthenticated" @click="logout"
                     class="bg-red-500 text-white py-3 px-6 text-lg rounded-lg shadow-md hover:bg-red-600 transition-all duration-300">
                     Logout
                 </button>

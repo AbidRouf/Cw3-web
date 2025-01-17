@@ -9,7 +9,7 @@
                 </div>
                 <div class="max-w-3xl p-6 bg-white rounded-lg">
                     <ul v-if="friends.length > 0" class="space-y-4">
-                        <li v-for="friend in friends" :key="friend.id"
+                        <li v-for="friend in friends" :key="friend.id":id="friend.username"
                             class="border border-gray-300 rounded p-4 flex justify-between">
                             {{ friend.username }} - Hobbies: {{ friend.hobbies.join(', ') }}
                         </li>
@@ -78,15 +78,11 @@ export default defineComponent({
     justify-content: center;
     align-items: center;
     min-height: 32rem;
-    /* Minimum height of 32rem */
     background-color: rgba(0, 0, 0, 0.5);
-    /* Optional: dim background */
 }
 
 .modal-content {
     max-height: 90vh;
-    /* Ensures the modal doesn't exceed viewport height */
     overflow-y: auto;
-    /* Adds scroll for overflowing content */
 }
 </style>
