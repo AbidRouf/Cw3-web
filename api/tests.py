@@ -1,12 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.test import LiveServerTestCase
 from selenium.webdriver import Chrome
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import Select
 from api.models import Hobby
+import time
 
 User = get_user_model()
 
@@ -28,10 +30,16 @@ class HobbiesAppSeleniumTests(LiveServerTestCase):
 
     def setUp(self):
         self.user1 = User.objects.create_user(
-            username="user1", email="user1@example.com", password="password1", dob="2000-01-01"
+            username="user1", email="user1@example.com", password="password1", dob="1983-12-04"
         )
         self.user2 = User.objects.create_user(
-            username="user2", email="user2@example.com", password="password2", dob="1995-06-15"
+            username="user2", email="user2@example.com", password="password2", dob="2005-06-15"
+        )
+        self.user3 = User.objects.create_user(
+            username="user3", email="user3@example.com", password="password3", dob="2013-05-03"
+        )
+        self.user4 = User.objects.create_user(
+            username="user4", email="user4@example.com", password="password4", dob="2000-01-01"
         )
         Hobby.objects.create(name="Football")
         Hobby.objects.create(name="Cycling")
@@ -56,10 +64,7 @@ class HobbiesAppSeleniumTests(LiveServerTestCase):
         self.assertEqual(current_url, f"{self.live_server_url}/", f"URL is not the expected homepage URL, we are instead at {current_url}")
 
     def test_edit_profile(self):
-        self.selenium.get(f"{self.live_server_url}/login/")
-        WebDriverWait(self.selenium, 10).until(EC.presence_of_element_located((By.ID, "username"))).send_keys("user1")
-        self.selenium.find_element(By.ID, "password").send_keys("password1")
-        self.selenium.find_element(By.CSS_SELECTOR, ".submit-button").click()
+        self.test_login()
         profile_button = WebDriverWait(self.selenium, 10).until(
            EC.presence_of_element_located((By.ID, "profile"))
         )
@@ -110,11 +115,103 @@ class HobbiesAppSeleniumTests(LiveServerTestCase):
             f"Unexpected alert message: {alert.text}"
         )
         alert.accept()
-        # self.selenium.find_element(By.CSS_SELECTOR, ".submit-button").click()
 
-        # # Wait for the profile page to load
-        # WebDriverWait(self.selenium, 10).until(EC.presence_of_element_located((By.LINK_TEXT, "Manage Profile"))).click()
+    def test_filter_by_age(self):
+        self.test_login()
+        users_button = WebDriverWait(self.selenium, 10).until(
+           EC.presence_of_element_located((By.ID, "users"))
+        )
+        users_button.click()
+        # totalUsers = len(self.selenium.find_elements(By.CSS_SELECTOR, "ul#UserList li"))
+        WebDriverWait(self.selenium, 10).until(
+            lambda driver: driver.find_element(By.ID, "minAge").get_attribute("value") == "0"
+        )
+        minAge = self.selenium.find_element(By.ID, "minAge")
+        minAge.click()
+        minAge.clear()
+        minAge.send_keys("15")
+        # WebDriverWait(self.selenium, 10).until(
+        #     lambda driver: driver.find_element(By.ID, "maxAge").get_attribute("value") == "300"
+        # )
+        maxAge = self.selenium.find_element(By.ID, "maxAge")
+        maxAge.click()
+        maxAge.send_keys(Keys.CONTROL + "a")
+        maxAge.send_keys(Keys.BACKSPACE)
+        maxAge.send_keys("22")
+        minAge.click()
+        try:
+            WebDriverWait(self.selenium, 10).until(
+                lambda driver: len(driver.find_elements(By.CSS_SELECTOR, "ul li")) == 1
+            )
+            filteredUsers = len(self.selenium.find_elements(By.CSS_SELECTOR, "ul#UserList li"))
+            self.assertEqual(
+                filteredUsers,
+                1,
+                f"{filteredUsers} number of users displayed"
+            )   
+        except Exception as e:
+            filteredUsers = len(self.selenium.find_elements(By.CSS_SELECTOR, "ul#UserList li"))
+            print(f"Test failed, expected 1 user to be displayed, but {filteredUsers} users were displayed")
+            raise e
 
-        # self.selenium.find_element(By.CSS_SELECTOR, ".save-button").click()
-
-        # self.assertIn("Profile updated successfully", self.selenium.page_source)
+    def test_send_friend_request(self):
+        self.test_login()
+        users_button = WebDriverWait(self.selenium, 10).until(
+            EC.presence_of_element_located((By.ID, "users"))
+        )
+        users_button.click()
+        self.selenium.find_element(By.CSS_SELECTOR, "ul li#user2 button#AddFriend").click()
+        WebDriverWait(self.selenium, 10).until(EC.alert_is_present())
+        alert = self.selenium.switch_to.alert
+        alert.text
+        self.assertEqual(
+            alert.text,
+            "Friend request sent successfully.",
+            f"Unexpected alert message: {alert.text}"
+        )
+        alert.accept()
+    
+    def test_accept_friend_request(self):
+        self.test_login()
+        users_button = WebDriverWait(self.selenium, 10).until(
+            EC.presence_of_element_located((By.ID, "users"))
+        )
+        users_button.click()
+        self.selenium.find_element(By.CSS_SELECTOR, "ul li#user2 button#AddFriend").click()
+        WebDriverWait(self.selenium, 10).until(EC.alert_is_present())
+        alert = self.selenium.switch_to.alert
+        alert.text
+        self.assertEqual(
+            alert.text,
+            "Friend request sent successfully.",
+            f"Unexpected alert message: {alert.text}"
+        )
+        alert.accept()
+        self.selenium.find_element(By.ID, "Close").click()
+        time.sleep(1)
+        self.selenium.find_element(By.ID, "logout").click()
+        WebDriverWait(self.selenium, 10).until(EC.alert_is_present())
+        self.selenium.switch_to.alert.accept()
+        self.selenium.find_element(By.ID, "login").click()
+        WebDriverWait(self.selenium, 10).until(EC.presence_of_element_located((By.ID, "username"))).send_keys("user2")
+        self.selenium.find_element(By.ID, "password").send_keys("password2")
+        self.selenium.find_element(By.CSS_SELECTOR, ".submit-button").click()
+        requests_button = WebDriverWait(self.selenium, 10).until(
+            EC.presence_of_element_located((By.ID, "requests"))
+        )
+        requests_button.click()
+        self.selenium.find_element(By.CSS_SELECTOR, "ul li#user1 button").click()
+        WebDriverWait(self.selenium, 10).until(EC.alert_is_present())
+        self.selenium.switch_to.alert.accept()
+        time.sleep(1)
+        self.selenium.find_element(By.ID, "Close").click()
+        friends_button = WebDriverWait(self.selenium, 10).until(
+            EC.presence_of_element_located((By.ID, "friends"))
+        )
+        friends_button.click()
+        friend = self.selenium.find_element(By.CSS_SELECTOR, "ul li#user1")
+        self.assertIn(
+            "user1",
+            friend.text,
+            f"Unexpected friend: {friend.text}"
+        )

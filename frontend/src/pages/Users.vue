@@ -5,7 +5,7 @@
             <div class="modal-content min-h-32">
                 <div class="modal-header">
                     <h5 class="modal-title ms-3" id="ModalLabel">Other Users</h5>
-                    <button type="button" class="btn-close" @click="closeModal"></button>
+                    <button type="button" id="Close" class="btn-close" @click="closeModal"></button>
                 </div>
                 <div class="max-w-3xl p-6 bg-white rounded-lg">
                     <div class="mb-6 flex justify-between items-center">
@@ -13,20 +13,20 @@
                             <label class="flex items-center space-x-2">
                                 <span>Min Age:</span>
                                 <input type="number" v-model.number="filters.minAge" @change="applyFilters"
-                                    class="border border-gray-300 rounded p-2" />
+                                    class="border border-gray-300 rounded p-2" id="minAge"/>
                             </label>
                             <label class="flex items-center space-x-2">
                                 <span>Max Age:</span>
                                 <input type="number" v-model.number="filters.maxAge" @change="applyFilters"
-                                    class="border border-gray-300 rounded p-2" />
+                                    class="border border-gray-300 rounded p-2"  id="maxAge"/>
                             </label>
                         </div>
                     </div>
-                    <ul v-if="users.length > 0" class="space-y-4">
-                        <li v-for="user in users" :key="user.id"
+                    <ul v-if="users.length > 0" class="space-y-4" id="UserList">
+                        <li v-for="user in users" :key="user.id" :id="user.username"
                             class="border border-gray-300 rounded p-4 flex justify-between">
                             {{ user.username }} - Hobbies: {{ user.hobbies.join(', ') }}
-                            <button @click="sendFriendRequest(user.id)"
+                            <button  id="AddFriend" @click="sendFriendRequest(user.id)"
                                 class="ml-2 bg-green-500 text-white rounded h-12 p-2 flex-shrink-0">Send Friend
                                 Request</button>
 

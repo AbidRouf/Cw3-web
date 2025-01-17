@@ -3,7 +3,7 @@
         <div class="bg-white rounded-lg shadow-lg overflow-hidden w-full max-w-2xl">
             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                 <h5 class="text-xl font-semibold" id="ModalLabel">See Requests</h5>
-                <button type="button" class="text-gray-400 hover:text-gray-600" aria-label="Close" @click="closeModal">
+                <button type="button" id="Close" class="text-gray-400 hover:text-gray-600" aria-label="Close" @click="closeModal">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -14,7 +14,7 @@
             <div class="px-6 py-4">
                 <h3 class="text-lg font-medium mb-4">Pending Friend Requests</h3>
                 <ul class="space-y-4">
-                    <li v-for="request in friendRequests" :key="request.id" class="flex justify-between items-center">
+                    <li v-for="request in friendRequests" :key="request.id" :id="request.from_username"class="flex justify-between items-center">
                         <span>{{ request.from_username }} (has hobbies: {{ request.hobbies.join(', ') }}) sent you a
                             friend request on {{ request.sent_on }}</span>
                         <div class="space-y-2">

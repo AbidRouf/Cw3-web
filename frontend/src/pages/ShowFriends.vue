@@ -9,7 +9,7 @@
                 </div>
                 <div class="max-w-3xl p-6 bg-white rounded-lg">
                     <ul v-if="friends.length > 0" class="space-y-4">
-                        <li v-for="friend in friends" :key="friend.id"
+                        <li v-for="friend in friends" :key="friend.id":id="friend.username"
                             class="border border-gray-300 rounded p-4 flex justify-between">
                             {{ friend.username }} - Hobbies: {{ friend.hobbies.join(', ') }}
                         </li>
