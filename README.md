@@ -42,3 +42,15 @@ To run this project in your development machine, follow these steps:
 ## License
 
 This code is dedicated to the public domain to the maximum extent permitted by applicable law, pursuant to [CC0](http://creativecommons.org/publicdomain/zero/1.0/).
+
+
+List Of Members:
+-Humayun Amin (ec22454)
+-Irfan Idriss Budaly (ec22599)
+-Abidur Rouf (ec22926)
+-Mohamed Abdulrazaq Alsowmely (ec22451)
+
+Mohamed Abdulrazaq Alsowmely - Frontend Functionality most specifically working on components,also aided with testing and deployment.
+Abidur Rouf - Worked on Frontend Templates and functionalites with Frontend and Backend.
+Irfan Idriss Budaly - Connected both Frontend and Backend functionalities and worked on testing and deployment and helped backend functionalities as well as components
+Humayun Amin - Backend Functionality Working on models, views and urls
